@@ -1,6 +1,7 @@
 package ai.ghosty.paycheck.controller;
 
 import ai.ghosty.paycheck.model.Employee;
+import ai.ghosty.paycheck.model.Record;
 import ai.ghosty.paycheck.model.User;
 import ai.ghosty.paycheck.service.EmployeeServices;
 import ai.ghosty.paycheck.service.RecordsServices;
@@ -65,8 +66,8 @@ public class ConfirmController {
     }
 
     private void createPaycheckRecord() {
-        SalaryCalculator calculation = new SalaryCalculator(employee);
-        RecordsServices.create(calculation, employee.getId());
+        Record record = SalaryCalculator.calculate(employee);
+        RecordsServices.create(record);
     }
 
     private boolean checkFields() {

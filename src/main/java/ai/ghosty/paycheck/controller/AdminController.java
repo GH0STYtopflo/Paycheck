@@ -2,6 +2,7 @@ package ai.ghosty.paycheck.controller;
 
 import ai.ghosty.paycheck.model.Employee;
 import ai.ghosty.paycheck.model.Position;
+import ai.ghosty.paycheck.model.Record;
 import ai.ghosty.paycheck.service.EmployeeServices;
 import ai.ghosty.paycheck.service.RecordsServices;
 import ai.ghosty.paycheck.service.SalaryCalculator;
@@ -140,8 +141,8 @@ public class AdminController extends Controller {
         emp.setLoan(new BigDecimal(txtfLoan.getText().trim()));
         emp.setPosition(new Position(txtfPosition.getText().trim(), new BigDecimal(txtfIncome.getText().trim())));
 
-        SalaryCalculator calc = new SalaryCalculator(emp);
-        RecordsServices.create(calc, emp.getId());
+        Record rec = SalaryCalculator.calculate(emp);
+        RecordsServices.create(rec);
         EmployeeServices.updateUserState(emp);
 
         lblWarning.setText("Created new record successfully");
