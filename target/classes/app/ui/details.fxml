@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.SVGPath?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="850.0" styleClass="rootPane" stylesheets="@detailsStyle.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ai.ghosty.paycheck.controller.DetailsController">
+   <center>
+      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="15.0" BorderPane.alignment="CENTER">
+         <children>
+            <VBox alignment="TOP_CENTER" layoutX="235.0" layoutY="10.0" prefHeight="600.0" prefWidth="400.0" spacing="10.0" styleClass="card">
+               <HBox.margin>
+                  <Insets bottom="10.0" />
+               </HBox.margin>
+               <children>
+                  <Label text="Payments" textFill="#32b905">
+                     <font>
+                        <Font name="System Bold" size="15.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets bottom="-5.0" top="10.0" />
+                     </VBox.margin>
+                  </Label>
+                  <Separator prefWidth="200.0">
+                     <VBox.margin>
+                        <Insets bottom="10.0" top="5.0" />
+                     </VBox.margin>
+                  </Separator>
+
+                  <HBox spacing="10.0">
+                     <children>
+                        <Label maxWidth="Infinity" text="Base Income:" HBox.hgrow="ALWAYS" />
+                        <Label fx:id="lblBaseIncome" text="\$0.00" />
+                     </children>
+                     <VBox.margin><Insets bottom="5.0" left="15.0" right="15.0" /></VBox.margin>
+                  </HBox>
+                  <HBox spacing="10.0">
+                     <children>
+                        <Label maxWidth="Infinity" text="Overtime Pay:" HBox.hgrow="ALWAYS" />
+                        <Label fx:id="lblOt" text="\$0.00" />
+                     </children>
+                     <VBox.margin><Insets bottom="5.0" left="15.0" right="15.0" /></VBox.margin>
+                  </HBox>
+                  <HBox spacing="10.0">
+                     <children>
+                        <Label maxWidth="Infinity" text="Accommodation Allowance:" HBox.hgrow="ALWAYS" />
+                        <Label fx:id="lblAccommodationAllowance" text="\$0.00" />
+                     </children>
+                     <VBox.margin><Insets bottom="5.0" left="15.0" right="15.0" /></VBox.margin>
+                  </HBox>
+                  <HBox spacing="10.0">
+                     <children>
+                        <Label maxWidth="Infinity" text="Meal Allowance:" HBox.hgrow="ALWAYS" />
+                        <Label fx:id="lblMealAllowance" text="\$0.00" />
+                     </children>
+                     <VBox.margin><Insets bottom="5.0" left="15.0" right="15.0" /></VBox.margin>
+                  </HBox>
+                  <HBox spacing="10.0">
+                     <children>
+                        <Label maxWidth="Infinity" text="Recreation Allowance:" HBox.hgrow="ALWAYS" />
+                        <Label fx:id="lblRecreationAllowance" text="\$0.00" />
+                     </children>
+                     <VBox.margin><Insets bottom="5.0" left="15.0" right="15.0" /></VBox.margin>
+                  </HBox>
+                  <HBox spacing="10.0">
+                     <children>
+                        <Label maxWidth="Infinity" text="Child Allowance:" HBox.hgrow="ALWAYS" />
+                        <Label fx:id="lblChildAllowance" text="\$0.00" />
+                     </children>
+                     <VBox.margin><Insets bottom="5.0" left="15.0" right="15.0" /></VBox.margin>
+                  </HBox>
+                  <HBox spacing="10.0">
+                     <children>
+                        <Label maxWidth="Infinity" text="Women's Extra:" HBox.hgrow="ALWAYS" />
+                        <Label fx:id="lblWomenExtra" text="\$0.00" />
+                     </children>
+                     <VBox.margin><Insets bottom="5.0" left="15.0" right="15.0" /></VBox.margin>
+                  </HBox>
+                  <Region prefHeight="200.0" prefWidth="200.0" />
+                  <Separator prefWidth="200.0">
+                     <VBox.margin><Insets bottom="5.0" left="15.0" right="15.0" top="5.0" /></VBox.margin>
+                  </Separator>
+                  <HBox spacing="10.0">
+                     <children>
+                        <Label maxWidth="Infinity" style="-fx-font-weight: bold;" text="Gross Income:" HBox.hgrow="ALWAYS">
+                           <HBox.margin>
+                              <Insets bottom="10.0" />
+                           </HBox.margin>
+                           <font>
+                              <Font size="14.0" />
+                           </font></Label>
+                        <Label fx:id="lblGrossIncome" style="-fx-font-weight: bold;" text="\$0.00">
+                           <font>
+                              <Font size="14.0" />
+                           </font></Label>
+                     </children>
+                     <VBox.margin><Insets bottom="5.0" left="15.0" right="15.0" /></VBox.margin>
+                  </HBox>
+               </children>
+            </VBox>
+            <VBox alignment="TOP_CENTER" layoutX="235.0" layoutY="10.0" prefHeight="600.0" prefWidth="400.0" spacing="10.0" styleClass="card">
+               <children>
+                  <Label text="Deductions" textFill="#bf0f0f">
+                     <font>
+                        <Font name="System Bold" size="15.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets bottom="-5.0" top="10.0" />
+                     </VBox.margin>
+                  </Label>
+                  <Separator prefWidth="200.0">
+                     <VBox.margin>
+                        <Insets bottom="10.0" top="5.0" />
+                     </VBox.margin>
+                  </Separator>
+
+                  <HBox spacing="10.0">
+                     <children>
+                        <Label maxWidth="Infinity" text="Income Tax:" HBox.hgrow="ALWAYS" />
+                        <Label fx:id="lblTax" text="\$0.00" />
+                     </children>
+                     <VBox.margin><Insets bottom="5.0" left="15.0" right="15.0" /></VBox.margin>
+                  </HBox>
+                  <HBox spacing="10.0">
+                     <children>
+                        <Label maxWidth="Infinity" text="Social Security:" HBox.hgrow="ALWAYS" />
+                        <Label fx:id="lblSocialSecurity" text="\$0.00" />
+                     </children>
+                     <VBox.margin><Insets bottom="5.0" left="15.0" right="15.0" /></VBox.margin>
+                  </HBox>
+                  <HBox spacing="10.0">
+                     <children>
+                        <Label maxWidth="Infinity" text="Healthcare:" HBox.hgrow="ALWAYS" />
+                        <Label fx:id="lblHealthcare" text="\$0.00" />
+                     </children>
+                     <VBox.margin><Insets bottom="5.0" left="15.0" right="15.0" /></VBox.margin>
+                  </HBox>
+                  <HBox spacing="10.0">
+                     <children>
+                        <Label maxWidth="Infinity" text="Company Insurance:" HBox.hgrow="ALWAYS" />
+                        <Label fx:id="lblInsurance" text="\$0.00" />
+                     </children>
+                     <VBox.margin><Insets bottom="5.0" left="15.0" right="15.0" /></VBox.margin>
+                  </HBox>
+                  <HBox spacing="10.0">
+                     <children>
+                        <Label maxWidth="Infinity" text="Deduction From Hours:" HBox.hgrow="ALWAYS" />
+                        <Label fx:id="lblDeductionFromHours" text="\$0.00" />
+                     </children>
+                     <VBox.margin><Insets bottom="5.0" left="15.0" right="15.0" /></VBox.margin>
+                  </HBox>
+                  <HBox spacing="10.0">
+                     <children>
+                        <Label maxWidth="Infinity" text="Loan Repayment:" HBox.hgrow="ALWAYS" />
+                        <Label fx:id="lblLoanRepay" text="\$0.00" />
+                     </children>
+                     <VBox.margin><Insets bottom="5.0" left="15.0" right="15.0" /></VBox.margin>
+                  </HBox>
+                  <Region prefHeight="200.0" prefWidth="200.0" />
+                  <Separator prefWidth="200.0">
+                     <VBox.margin><Insets bottom="5.0" left="15.0" right="15.0" top="5.0" /></VBox.margin>
+                  </Separator>
+                  <HBox spacing="10.0">
+                     <children>
+                        <Label maxWidth="Infinity" style="-fx-font-weight: bold;" text="Total Deductions:" HBox.hgrow="ALWAYS">
+                           <HBox.margin>
+                              <Insets bottom="10.0" />
+                           </HBox.margin>
+                           <font>
+                              <Font size="14.0" />
+                           </font></Label>
+                        <Label fx:id="lblTotalDeductions" style="-fx-font-weight: bold;" text="\$0.00">
+                           <font>
+                              <Font size="14.0" />
+                           </font></Label>
+                     </children>
+                     <VBox.margin><Insets bottom="5.0" left="15.0" right="15.0" /></VBox.margin>
+                  </HBox>
+               </children>
+               <HBox.margin>
+                  <Insets bottom="10.0" />
+               </HBox.margin>
+            </VBox>
+         </children>
+         <BorderPane.margin>
+            <Insets bottom="10.0" top="20.0" />
+         </BorderPane.margin>
+      </HBox>
+   </center>
+   <top>
+      <VBox prefHeight="187.0" prefWidth="850.0" BorderPane.alignment="CENTER">
+         <children>
+            <HBox fx:id="barDeco" alignment="CENTER_RIGHT" minHeight="-Infinity" prefHeight="34.0" prefWidth="350.0" spacing="7.0" styleClass="windowDeco">
+               <children>
+                  <Button fx:id="btnMinimize" layoutX="342.0" layoutY="14.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onMinimize" prefHeight="22.0" prefWidth="22.0">
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                     <graphic>
+                        <SVGPath content="M240-120v-80h480v80H240Z" scaleX="0.025" scaleY="0.025" scaleZ="0.1" />
+                     </graphic>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </Button>
+                  <Button fx:id="btnClose" layoutX="325.0" layoutY="15.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onClose" prefHeight="22.0" prefWidth="22.0">
+                     <graphic>
+                        <SVGPath content="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z" scaleX="0.022" scaleY="0.022" scaleZ="0.1">
+                           <cursor>
+                              <Cursor fx:constant="DEFAULT" />
+                           </cursor>
+                        </SVGPath>
+                     </graphic>
+                     <HBox.margin>
+                        <Insets right="12.0" />
+                     </HBox.margin>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </Button>
+               </children>
+               <VBox.margin>
+                  <Insets left="15.0" right="15.0" top="5.0" />
+               </VBox.margin>
+            </HBox>
+            <VBox fx:id="credits" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="130.0" prefWidth="100.0" styleClass="card">
+               <VBox.margin>
+                  <Insets left="16.0" right="16.0" top="15.0" />
+               </VBox.margin>
+               <children>
+                  <HBox spacing="10.0">
+                     <children>
+                        <Label maxWidth="Infinity" text="ID:" HBox.hgrow="ALWAYS" />
+                        <Label fx:id="lblId" text="N/A" />
+                     </children>
+                     <VBox.margin><Insets bottom="2.0" left="15.0" right="15.0" top="5.0" /></VBox.margin>
+                  </HBox>
+                  <HBox spacing="10.0">
+                     <children>
+                        <Label maxWidth="Infinity" text="First Name:" HBox.hgrow="ALWAYS" />
+                        <Label fx:id="lblFirstName" text="N/A" />
+                     </children>
+                     <VBox.margin><Insets bottom="2.0" left="15.0" right="15.0" /></VBox.margin>
+                  </HBox>
+                  <HBox spacing="10.0">
+                     <children>
+                        <Label maxWidth="Infinity" text="Last Name:" HBox.hgrow="ALWAYS" />
+                        <Label fx:id="lblLastName" text="N/A" />
+                     </children>
+                     <VBox.margin><Insets bottom="2.0" left="15.0" right="15.0" /></VBox.margin>
+                  </HBox>
+                  <HBox spacing="10.0">
+                     <children>
+                        <Label maxWidth="Infinity" text="Gender:" HBox.hgrow="ALWAYS" />
+                        <Label fx:id="lblGender" text="N/A" />
+                     </children>
+                     <VBox.margin><Insets bottom="2.0" left="15.0" right="15.0" /></VBox.margin>
+                  </HBox>
+                  <HBox spacing="10.0">
+                     <children>
+                        <Label maxWidth="Infinity" text="Title" HBox.hgrow="ALWAYS" />
+                        <Label fx:id="lblPositionTitle" text="N/A" />
+                     </children>
+                     <VBox.margin>
+                        <Insets bottom="5.0" left="15.0" right="15.0" />
+                     </VBox.margin>
+                  </HBox>
+                  <HBox spacing="10.0">
+                     <children>
+                        <Label maxWidth="Infinity" text="Hire Date:" HBox.hgrow="ALWAYS" />
+                        <Label fx:id="lblHireDate" text="N/A" />
+                     </children>
+                     <VBox.margin><Insets bottom="5.0" left="15.0" right="15.0" /></VBox.margin>
+                  </HBox>
+               </children>
+            </VBox>
+            <HBox alignment="CENTER" prefHeight="122.0" prefWidth="850.0" spacing="5.0">
+               <VBox.margin>
+                  <Insets top="15.0" />
+               </VBox.margin>
+               <children>
+                  <Label text="Payment Period">
+                     <font>
+                        <Font name="System Bold" size="13.0" />
+                     </font>
+                  </Label>
+                  <ComboBox fx:id="comboPeriod" prefHeight="26.0" prefWidth="239.0">
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </ComboBox>
+               </children>
+            </HBox>
+         </children>
+         <BorderPane.margin>
+            <Insets />
+         </BorderPane.margin>
+      </VBox>
+   </top>
+   <bottom>
+      <HBox alignment="CENTER" prefHeight="63.0" prefWidth="850.0" spacing="5.0" styleClass="totalCard" BorderPane.alignment="CENTER">
+         <BorderPane.margin>
+            <Insets bottom="15.0" left="250.0" right="250.0" />
+         </BorderPane.margin>
+         <children>
+            <Label text="Total Pay:" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="16.0" />
+               </font>
+            </Label>
+            <Label fx:id="lblTotalPay" layoutX="146.0" layoutY="31.0" text="\$12,300" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="16.0" />
+               </font>
+            </Label>
+         </children>
+      </HBox>
+   </bottom>
+</BorderPane>
