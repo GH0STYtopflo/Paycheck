@@ -8,7 +8,7 @@ import java.util.Objects;
 
 public class Employee {
     private int id, children, ot, workHours;
-    private boolean rent;
+    private boolean isRent, isMarried;
     private String name, lastName, gender;
     private Position position;
     private LocalDate hireDate;
@@ -16,9 +16,9 @@ public class Employee {
     private int deductionHours;
 
 
-    public Employee(String name, String lastName, String gender, int ot, int children,
+    public Employee(String name, String lastName, String gender, boolean isMarried, int ot, int children,
                     int workHours, int deductionHours, BigDecimal loan,
-                    boolean rent, LocalDate hireDate, Position position) {
+                    boolean isRent, LocalDate hireDate, Position position) {
 
         this.id = IDGen.generateUniqueID();
         this.name = name;
@@ -29,17 +29,16 @@ public class Employee {
         this.workHours = workHours;
         this.deductionHours = deductionHours;
         this.loan = loan;
-        this.rent = rent;
-
-        if (position != null) {this.position = position; }
-        else this.position = new Position("NaP", BigDecimal.ZERO);
+        this.isRent = isRent;
+        this.isMarried = isMarried;
+        this.position = position;
 
         this.hireDate = Objects.requireNonNullElseGet(hireDate, LocalDate::now);
     }
 
-    public Employee(int id, String name, String lastName, String gender, int ot, int children,
+    public Employee(int id, String name, String lastName, String gender, boolean isMarried, int ot, int children,
                     int workHours, int deductionHours, BigDecimal loan,
-                    boolean rent, LocalDate hireDate, Position position) {
+                    boolean isRent, LocalDate hireDate, Position position) {
 
         this.name = name;
         this.lastName = lastName;
@@ -50,15 +49,14 @@ public class Employee {
         this.workHours = workHours;
         this.deductionHours = deductionHours;
         this.loan = loan;
-        this.rent = rent;
-
-        if (position != null) {this.position = position; }
-        else this.position = new Position("NaP", BigDecimal.ZERO);
+        this.isRent = isRent;
+        this.isMarried = isMarried;
+        this.position = position;
 
         this.hireDate = Objects.requireNonNullElseGet(hireDate, LocalDate::now);
     }
 
-    // getter and setter
+    // getters and setters
     public int getId() {
         return id;
     }
@@ -71,29 +69,15 @@ public class Employee {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getGender() {
         return gender;
-    }
-
-    public void setGender(String gender) {
-        this.gender = gender;
     }
 
     public LocalDate getHireDate() {
         return hireDate;
     }
 
-    public void setHireDate(LocalDate hireDate) {
-        this.hireDate = hireDate;
-    }
-
-    public int getExtraHours() {
-        return ot;
-    }
+    public int getExtraHours() {return ot;}
 
     public void setExtraHours(int extraHours) {
         this.ot = extraHours;
@@ -129,8 +113,8 @@ public class Employee {
 
     public void setChildren(int children) {this.children = children;}
 
-    public void setRent(boolean rent) {
-        this.rent = rent;
+    public void setIsRent(boolean isRent) {
+        this.isRent = isRent;
     }
 
     public Position getPosition() {
@@ -141,15 +125,17 @@ public class Employee {
         this.position = position;
     }
 
-    public boolean isRent() {
-        return rent;
+    public boolean getIsRent() {
+        return isRent;
     }
 
     public String getLastName() {
         return lastName;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public boolean isMarried() {
+        return isMarried;
     }
+
+    public void setMarried(boolean married) {isMarried = married;}
 }

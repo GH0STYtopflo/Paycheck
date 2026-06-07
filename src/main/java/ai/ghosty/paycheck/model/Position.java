@@ -3,19 +3,25 @@ package ai.ghosty.paycheck.model;
 import java.math.BigDecimal;
 
 public class Position {
-    private String posName;
-    private BigDecimal baseSalaryPerHour;
+    private int id;
+    private String title;
+    private BigDecimal salaryPerHour;
 
-    public Position(String posName, BigDecimal baseSalaryPerHour) {
-        this.posName = posName;
-        this.baseSalaryPerHour = baseSalaryPerHour;
+    public Position(int id, String title, BigDecimal salaryPerHour) {
+        this.id = id;
+        this.title = title;
+        this.salaryPerHour = salaryPerHour;
     }
 
-    public String getPosName() {
-        return posName;
+    public String getTitle() {
+        return title;
     }
 
-    public BigDecimal getBaseSalaryPerHour() {
-        return baseSalaryPerHour;
+    public BigDecimal getSalaryPerHour() {
+        return salaryPerHour;
+    }
+
+    public int getId() {
+        return id;
     }
 }

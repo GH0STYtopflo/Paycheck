@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import ai.ghosty.paycheck.model.Record;
 
 public class DetailsController extends Controller {
     @FXML private Label lblTotalPay;
@@ -31,7 +32,7 @@ public class DetailsController extends Controller {
     @FXML private Label lblTax, lblSocialSecurity, lblHealthcare, lblInsurance,
             lblDeductionFromHours, lblLoanRepay, lblTotalDeductions;
 
-    private ArrayList<SalaryCalculator> list;
+    private ArrayList<Record> list;
 
     // ATTENTION! argument pattern:
     // initialize(stage, Employee, SalaryCalculator)
@@ -40,7 +41,7 @@ public class DetailsController extends Controller {
         this.ownstage = (Stage) args[0];
 
         Employee emp = (Employee) args[1];
-        this.list = (ArrayList<SalaryCalculator>) args[2];
+        this.list = (ArrayList<Record>) args[2];
         comboPeriod.setItems(periodDate());
         comboPeriod.setValue(comboPeriod.getItems().getFirst());
         comboPeriod.setOnAction((event) -> {
@@ -72,29 +73,29 @@ public class DetailsController extends Controller {
         lblLastName.setText(emp.getLastName());
         lblGender.setText(emp.getGender());
         lblHireDate.setText(emp.getHireDate().format(DateTimeFormatter.ISO_LOCAL_DATE));
-        lblPositionTitle.setText(emp.getPosition().getPosName());
+        lblPositionTitle.setText(emp.getPosition().getTitle());
     }
 
-    private void populateSalary(SalaryCalculator sc) {
-        lblBaseIncome.setText(formatCurrency(sc.getBaseIncome()));
-        lblOt.setText(formatCurrency(sc.getOt()));
-        lblAccommodationAllowance.setText(formatCurrency(sc.getAccommodationAllowance()));
-        lblMealAllowance.setText(formatCurrency(sc.getMealAllowance()));
-        lblRecreationAllowance.setText(formatCurrency(sc.getRecreationAllowance()));
-        lblChildAllowance.setText(formatCurrency(sc.getChildAllowance()));
-        lblWomenExtra.setText(formatCurrency(sc.getWomenExtra()));
+    private void populateSalary(Record rec) {
+        lblBaseIncome.setText(formatCurrency(rec.getBaseIncome()));
+        lblOt.setText(formatCurrency(rec.getOtPay()));
+        lblAccommodationAllowance.setText(formatCurrency(rec.getAccommodationAllowance()));
+        lblMealAllowance.setText(formatCurrency(rec.getMealAllowance()));
+        lblRecreationAllowance.setText(formatCurrency(rec.getRecreationAllowance()));
+        lblChildAllowance.setText(formatCurrency(rec.getChildAllowance()));
+        lblWomenExtra.setText(formatCurrency(rec.getWomensExtra()));
 
-        lblGrossIncome.setText(formatCurrency(sc.getGrossIncome()));
+        lblGrossIncome.setText(formatCurrency(rec.getGrossIncome()));
 
-        lblTax.setText(formatCurrency(sc.getTax()));
-        lblSocialSecurity.setText(formatCurrency(sc.getSocialSecurity()));
-        lblHealthcare.setText(formatCurrency(sc.getHealthcare()));
-        lblInsurance.setText(formatCurrency(sc.getInsurance()));
-        lblDeductionFromHours.setText(formatCurrency(sc.getDeductionFromHours()));
-        lblLoanRepay.setText(formatCurrency(sc.getLoanRepay()));
+        lblTax.setText(formatCurrency(rec.getTax()));
+        lblSocialSecurity.setText(formatCurrency(rec.getSocialSecurity()));
+        lblHealthcare.setText(formatCurrency(rec.getHealthcare()));
+        lblInsurance.setText(formatCurrency(rec.getInsurance()));
+        lblDeductionFromHours.setText(formatCurrency(rec.getDeductionFromHours()));
+        lblLoanRepay.setText(formatCurrency(rec.getLoanRepay()));
 
-        lblTotalDeductions.setText(formatCurrency(sc.getTotalDeductions()));
-        lblTotalPay.setText(formatCurrency(sc.getNetIncome()));
+        lblTotalDeductions.setText(formatCurrency(rec.getTotalDeductions()));
+        lblTotalPay.setText(formatCurrency(rec.getNetIncome()));
     }
 
     private String formatCurrency(BigDecimal val) {
@@ -106,8 +107,9 @@ public class DetailsController extends Controller {
     private ObservableList<String> periodDate() {
         ArrayList<String> dates = new ArrayList<>(this.list.size());
 
-        for (SalaryCalculator cal : list) {
-            dates.add(cal.getDate());
+        // TODO we don't need the time stamp to be this accurate
+        for (Record rec : list) {
+            dates.add(rec.getDate());
         }
 
         return FXCollections.observableList(dates);

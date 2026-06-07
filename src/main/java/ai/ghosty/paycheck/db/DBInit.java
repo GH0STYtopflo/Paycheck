@@ -30,9 +30,9 @@ public class DBInit {
                          "emp_id INTEGER PRIMARY KEY AUTOINCREMENT," +
                          "name TEXT NOT NULL," +
                          "last_name TEXT NOT NULL," +
-                         "position INTEGER NOT NULL" +
-                         "martital status TEXT NOT NULL CHECK (marital IN (0,1))," +
+                         "pos_id INTEGER NOT NULL" +
                          "gender TEXT NOT NULL," +
+                         "marital_status REAL NOT NULL CHECK (marital_status IN (0,1))," +
                          "children INTEGER DEFAULT 0," +
                          "rent INTEGER NOT NULL CHECK (rent IN (0,1))," +
                          "work_hours INTEGER NOT NULL," +
@@ -40,7 +40,7 @@ public class DBInit {
                          "deduction_hours INTEGER DEFAULT 0," +
                          "loan REAL DEFAULT 0," +
                          "date TEXT NOT NULL," +
-                         "FOREIGN KEY (position) REFERENCES positions(pos_id))";
+                         "FOREIGN KEY (pos_id) REFERENCES positions(pos_id))";
 
                  try {
                      stmt.execute(sql);

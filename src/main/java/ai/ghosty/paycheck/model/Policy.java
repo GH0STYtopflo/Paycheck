@@ -8,7 +8,7 @@ public class Policy {
     private BigDecimal INCOME_TAX_RATE, SOCIAL_SECURITY_RATE, 
             HEALTHCARE_RATE, INSURANCE_RATE, 
             OVERTIME_MULTIPLIER, MAX_LOAN_REPAY_RATE, ACCOMMODATION_FLAT_RATE, 
-            MEAL_ALLOWANCE_FLAT_RATE, RECREATION_PER_CHILD, 
+            MEAL_ALLOWANCE_FLAT_RATE, RECREATION_PER_FAMILY_MEMBER, 
             CHILD_ALLOWANCE_PER_CHILD, WOMEN_EXTRA;
     
     public Policy() {
@@ -20,7 +20,7 @@ public class Policy {
         this.MAX_LOAN_REPAY_RATE = new BigDecimal("0.10");
         this.ACCOMMODATION_FLAT_RATE = new BigDecimal("500.00");
         this.MEAL_ALLOWANCE_FLAT_RATE = new BigDecimal("100.00");
-        this.RECREATION_PER_CHILD = new BigDecimal("25.00");
+        this.RECREATION_PER_FAMILY_MEMBER = new BigDecimal("25.00");
         this.CHILD_ALLOWANCE_PER_CHILD = new BigDecimal("75.00");
         this.WOMEN_EXTRA = new BigDecimal("100.00");
     }
@@ -29,7 +29,7 @@ public class Policy {
                   BigDecimal HEALTHCARE_RATE, BigDecimal INSURANCE_RATE,
                   BigDecimal OVERTIME_MULTIPLIER, BigDecimal MAX_LOAN_REPAY_RATE,
                   BigDecimal ACCOMMODATION_FLAT_RATE, BigDecimal MEAL_ALLOWANCE_FLAT_RATE,
-                  BigDecimal RECREATION_PER_CHILD, BigDecimal CHILD_ALLOWANCE_PER_CHILD,
+                  BigDecimal RECREATION_PER_FAMILY_MEMBER, BigDecimal CHILD_ALLOWANCE_PER_CHILD,
                   BigDecimal WOMEN_EXTRA) {
         
         this.INCOME_TAX_RATE = Objects.requireNonNullElseGet(INCOME_TAX_RATE, (Supplier<? extends BigDecimal>) new BigDecimal("0.15"));
@@ -40,7 +40,7 @@ public class Policy {
         this.MAX_LOAN_REPAY_RATE = Objects.requireNonNullElseGet(MAX_LOAN_REPAY_RATE, (Supplier<? extends BigDecimal>) new BigDecimal("0.10"));
         this.ACCOMMODATION_FLAT_RATE = Objects.requireNonNullElseGet(ACCOMMODATION_FLAT_RATE, (Supplier<? extends BigDecimal>) new BigDecimal("500.00"));
         this.MEAL_ALLOWANCE_FLAT_RATE = Objects.requireNonNullElseGet(MEAL_ALLOWANCE_FLAT_RATE, (Supplier<? extends BigDecimal>) new BigDecimal("100.00"));
-        this.RECREATION_PER_CHILD = Objects.requireNonNullElseGet(RECREATION_PER_CHILD, (Supplier<? extends BigDecimal>) new BigDecimal("25.00"));
+        this.RECREATION_PER_FAMILY_MEMBER = Objects.requireNonNullElseGet(RECREATION_PER_FAMILY_MEMBER, (Supplier<? extends BigDecimal>) new BigDecimal("25.00"));
         this.CHILD_ALLOWANCE_PER_CHILD = Objects.requireNonNullElseGet(CHILD_ALLOWANCE_PER_CHILD, (Supplier<? extends BigDecimal>) new BigDecimal("75"));
         this.WOMEN_EXTRA = Objects.requireNonNullElseGet(WOMEN_EXTRA, (Supplier<? extends BigDecimal>) new BigDecimal("100"));
     }
@@ -77,8 +77,8 @@ public class Policy {
         return MEAL_ALLOWANCE_FLAT_RATE;
     }
 
-    public BigDecimal getRECREATION_PER_CHILD() {
-        return RECREATION_PER_CHILD;
+    public BigDecimal getRECREATION_PER_FAMILY_MEMBER() {
+        return RECREATION_PER_FAMILY_MEMBER;
     }
 
     public BigDecimal getCHILD_ALLOWANCE_PER_CHILD() {

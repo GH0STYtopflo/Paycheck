@@ -14,7 +14,7 @@ public class SalaryCalculator {
     public static Record calculate(Employee employee, Policy policy) {
         Record record = new Record(employee.getId());
         
-        BigDecimal hourlyRate = employee.getPosition().getBaseSalaryPerHour()
+        BigDecimal hourlyRate = employee.getPosition().getSalaryPerHour()
                 .multiply(calculateTenureMultiplier(employee));
 
 
@@ -35,9 +35,9 @@ public class SalaryCalculator {
                 .multiply(policy.getOVERTIME_MULTIPLIER())
                 .setScale(2, RoundingMode.HALF_UP));
 
-        record.setAccommodationAllowance(employee.isRent() ? policy.getACCOMMODATION_FLAT_RATE() : BigDecimal.ZERO);
+        record.setAccommodationAllowance(employee.getIsRent() ? policy.getACCOMMODATION_FLAT_RATE() : BigDecimal.ZERO);
         record.setMealAllowance(policy.getMEAL_ALLOWANCE_FLAT_RATE());
-        record.setRecreationAllowance(policy.getRECREATION_PER_CHILD().multiply(BigDecimal.valueOf(employee.getChildren())));
+        record.setRecreationAllowance(policy.getRECREATION_PER_FAMILY_MEMBER().multiply(BigDecimal.valueOf(employee.getChildren() + (employee.isMarried() ? 2 : 0))));
         record.setChildAllowance(policy.getCHILD_ALLOWANCE_PER_CHILD().multiply(BigDecimal.valueOf(employee.getChildren())));
         record.setWomensExtra("f".equalsIgnoreCase(employee.getGender()) ? policy.getWOMEN_EXTRA() : BigDecimal.ZERO);
 

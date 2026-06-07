@@ -20,14 +20,14 @@ public class ConfManager {
                     "  \"MAX_LOAN_REPAY_RATE\": %s,\n" +
                     "  \"ACCOMMODATION_FLAT_RATE\": %s,\n" +
                     "  \"MEAL_ALLOWANCE_FLAT_RATE\": %s,\n" +
-                    "  \"RECREATION_PER_CHILD\": %s,\n" +
+                    "  \"RECREATION_PER_FAMILY_MEMBER\": %s,\n" +
                     "  \"CHILD_ALLOWANCE_PER_CHILD\": %s,\n" +
                     "  \"WOMEN_EXTRA\": %s\n" +
                     "}  \n", policy.getINCOME_TAX_RATE().toString(), policy.getSOCIAL_SECURITY_RATE().toString(),
                     policy.getHEALTHCARE_RATE().toString(), policy.getINSURANCE_RATE().toString(),
                     policy.getOVERTIME_MULTIPLIER().toString(), policy.getMAX_LOAN_REPAY_RATE().toString(),
                     policy.getACCOMMODATION_FLAT_RATE().toString(), policy.getMEAL_ALLOWANCE_FLAT_RATE().toString(),
-                    policy.getRECREATION_PER_CHILD().toString(), policy.getCHILD_ALLOWANCE_PER_CHILD().toString(),
+                    policy.getRECREATION_PER_FAMILY_MEMBER().toString(), policy.getCHILD_ALLOWANCE_PER_CHILD().toString(),
                     policy.getWOMEN_EXTRA().toString());
 
             try {

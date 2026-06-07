@@ -4,10 +4,15 @@ import ai.ghosty.paycheck.model.Employee;
 import ai.ghosty.paycheck.model.Position;
 import ai.ghosty.paycheck.model.Record;
 import ai.ghosty.paycheck.service.EmployeeServices;
+import ai.ghosty.paycheck.service.PositionsServices;
 import ai.ghosty.paycheck.service.RecordsServices;
 import ai.ghosty.paycheck.service.SalaryCalculator;
+import ai.ghosty.paycheck.util.FieldValidation;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.paint.Color;
@@ -15,12 +20,15 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class AdminController extends Controller {
     @FXML private TextField txtfName, txtfLast, txtfChildren, txtfWork, txtfOT,
-            txtfLoan, txtfPosition, txtfIncome, txtfDeduction;
+            txtfLoan, txtfDeduction;
     @FXML private Label lblWarning;
     @FXML private RadioButton radioMarried, radioNotMarried, radioFemale, radioMale;
     @FXML private DatePicker datePicker;
@@ -28,18 +36,29 @@ public class AdminController extends Controller {
     @FXML private Button register;
     @FXML private ToggleButton exists;
     @FXML private TextField txtfID;
+    @FXML private ComboBox<String> comboPositions;
 
-    private boolean married;
-    private String gender;
+    private RadioButton[] genderGroup, marriedGroup;
+    private List<Position> positions;
+
+
+    @FXML
+    private void onClose(){close();}
+    @FXML
+    private void onMinimized(){minimize();}
 
     // ATTENTION! arguments order: 1. own stage !ATTENTION
     @Override
     public void initialize(Object... args) {
         this.ownstage = (Stage) args[0];
         lblWarning.setVisible(false);
+        this.positions = PositionsServices.getAllPositions();
+        setUpPosCombo();
+        setUpRadiobuttons();
         show();
     }
 
+    // ||||||||||||||||||||||||||||||||| 1st tab ||||||||||||||||||||||||||||||||||
     private void show() {
         ownstage.setResizable(false);
         ownstage.initStyle(StageStyle.TRANSPARENT);
@@ -48,162 +67,125 @@ public class AdminController extends Controller {
         ownstage.show();
     }
 
-    @FXML
-    private void onRegister() {
-        if (!checkFields()) return;
-        if (!exists.isSelected()) register();
-        else updateEmpStatus();
+    private void setUpRadiobuttons() {
+        setUpRadioGroups();
+        radioFemale.setOnAction(e-> {radioMale.setSelected(false);});
+        radioMale.setOnAction(e-> {radioFemale.setSelected(false);});
+        radioMarried.setOnAction(e-> {radioNotMarried.setSelected(false);});
+        radioNotMarried.setOnAction(e-> {radioMarried.setSelected(false);});
+    }
+
+    private void setUpRadioGroups() {
+         marriedGroup = new RadioButton[]{radioMarried, radioNotMarried};
+         genderGroup = new RadioButton[]{radioMale, radioFemale};
+    }
+
+    private ObservableList<String> setUpPosCombo() {
+        List<String> titles = new ArrayList<>();
+
+        for (Position position : positions) {
+            titles.add(position.getTitle() + "-" + position.getId());
+        }
+
+        return FXCollections.observableList(titles);
     }
 
     @FXML
-    private void onExists() {
-        if (exists.isSelected()) {
-            register.setText("Update");
-            txtfID.setDisable(false);
-            txtfName.setDisable(true);
-            txtfLast.setDisable(true);
-            datePicker.setDisable(true);
-            radioMale.setDisable(true);
-            radioFemale.setDisable(true);
+    private void OnExists() {
+        txtfID.setDisable(!txtfID.isDisabled());
+        txtfName.setDisable(!txtfName.isDisabled());
+        txtfLast.setDisable(!txtfLast.isDisabled());
+
+        for (int i = 0; i < 20; i++) {
+            marriedGroup[i].setDisable(!marriedGroup[i].isDisabled());
+            genderGroup[i].setDisable(!genderGroup[i].isDisabled());
+        }
+
+        datePicker.setDisable(!datePicker.isDisable());
+        register.setText((exists.isSelected()) ? "New Paycheck" : "Register Employee" );
+        exists.setText("Employee doesn't exist");
+    }
+
+    @FXML
+    private void OnRegister() {
+        if (!exists.isSelected()) {
+            if (!FieldValidation.validateFields(new TextField[]{txtfName, txtfLast}, (byte) 1, lblWarning)) return;
+            if (!FieldValidation.validateFields(new TextField[]{txtfChildren, txtfOT,
+                    txtfDeduction , txtfWork, txtfLoan}, (byte) 3, lblWarning)) return;
+
+            if (!checkRadioButtons((byte) 3)) return;
         }
         else {
-            register.setText("Register Employee");
-            txtfID.setDisable(true);
-            txtfName.setDisable(false);
-            txtfLast.setDisable(false);
-            datePicker.setDisable(false);
-            radioMale.setDisable(false);
-            radioFemale.setDisable(false);
+            if (!FieldValidation.validateFields(new TextField[]{txtfID, txtfChildren, txtfOT,
+                    txtfDeduction , txtfWork, txtfLoan}, (byte) 3, lblWarning)) return;
+
+            if (!checkRadioButtons((byte) 2)) return;
         }
+
+        register();
     }
 
-    private void openConfirm(Employee emp) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/app/ui/confirm.fxml"));
-            Stage stage = new Stage();
-            stage.setScene(new Scene(loader.load()));
-            ConfirmController controller = loader.getController();
-            controller.initialize(stage, emp, lblWarning);
-        } catch (IOException e) {
-            System.err.println("[error] failed to load confirmation view");
+    // op codes: 1 = marital 2 = gender 3 = all
+    private boolean checkRadioButtons(byte op) {
+        boolean radioSelected = false;
+        if (op == 2 || op == 3) {
+            for (RadioButton radio : genderGroup) {
+                if (radio.isSelected()) radioSelected = true;
+            }
+
+            if (!radioSelected) {
+                lblWarning.setTextFill(Color.RED);
+                lblWarning.setText("Please select a gender");
+                lblWarning.setVisible(true);
+                return false;
+            }
         }
-    }
 
-    @FXML
-    private void onMarried() {
-        radioNotMarried.setSelected(false);
-        married = true;
-    }
-    @FXML
-    private void onNotMarried() {
-        radioMarried.setSelected(false);
-        married = false;
-    }
-    @FXML
-    private void onMale() {
-        radioFemale.setSelected(false);
-        gender = "m";
-    }
-    @FXML
-    private void onFemale() {
-        radioMale.setSelected(false);
-        gender = "f";
-    }
+        if (op == 1 ||  op == 3) {
+            radioSelected = false;
+            for (RadioButton radio : marriedGroup) {
+                if (radio.isSelected()) radioSelected = true;
+            }
 
-    @FXML
-    private void onClose(){close();}
-    @FXML
-    private void onMinimized(){minimize();}
+            if (!radioSelected) {
+                lblWarning.setTextFill(Color.RED);
+                lblWarning.setText("Please select a marital status");
+                lblWarning.setVisible(true);
+                return false;
+            }
+        }
 
-
+        return true;
+    }
 
     private void register() {
-        Employee emp = new Employee(txtfName.getText().trim(), txtfLast.getText().trim(), gender, Integer.parseInt(txtfOT.getText().trim()),
-                Integer.parseInt(txtfChildren.getText().trim()), Integer.parseInt(txtfWork.getText().trim()),
-                Integer.parseInt(txtfDeduction.getText().trim()), new BigDecimal(txtfLoan.getText().trim()),
-                rent.isSelected(), datePicker.getValue(), new Position(txtfPosition.getText(), new BigDecimal(txtfIncome.getText().trim())));
+        if (!exists.isSelected()) {
+            Employee emp = new Employee(txtfName.getText().trim(), txtfLast.getText().trim(),
+                    (radioMale.isSelected()) ? "m" : "f", radioMarried.isSelected(),
+                    Integer.parseInt(txtfOT.getText().trim()), Integer.parseInt(txtfChildren.getText().trim()),
+                    Integer.parseInt(txtfWork.getText().trim()), Integer.parseInt(txtfDeduction.getText().trim()),
+                    new BigDecimal(txtfLoan.getText().trim()), rent.isSelected(), datePicker.getValue(),
+                    positions.get(comboPositions.getSelectionModel().getSelectedIndex()));
 
-        openConfirm(emp);
-    }
+            // TODO Record rec = SalaryCalculator.calculate(emp, ) **handle policy bullsh
+        }
+        else {
+            Employee emp = EmployeeServices.getById(Integer.parseInt(txtfID.getText()));
+            emp.setMarried(radioMarried.isSelected());
+            emp.setIsRent(rent.isSelected());
+            emp.setLoan(new BigDecimal(txtfLoan.getText().trim()));
+            emp.setChildren(Integer.parseInt(txtfChildren.getText().trim()));
+            emp.setWorkHours(Integer.parseInt(txtfWork.getText().trim()));
+            emp.setExtraHours(Integer.parseInt(txtfOT.getText().trim()));
+            emp.setDeductionHours(Integer.parseInt(txtfDeduction.getText().trim()));
 
-    private void updateEmpStatus() {
-        Employee emp = EmployeeServices.getById(Integer.parseInt(txtfID.getText().trim()));
-        if (emp == null) {
-            updateWarning("Employee doesn't exist");
-            return;
+            // TODO Record rec = SalaryCalculator.calculate(emp, ) **handle policy bullsh
         }
 
-        emp.setChildren(Integer.parseInt(txtfChildren.getText().trim()));
-        emp.setWorkHours(Integer.parseInt(txtfWork.getText().trim()));
-        emp.setRent(rent.isSelected());
-        emp.setExtraHours(Integer.parseInt(txtfOT.getText().trim()));
-        emp.setDeductionHours(Integer.parseInt(txtfDeduction.getText().trim()));
-        emp.setLoan(new BigDecimal(txtfLoan.getText().trim()));
-        emp.setPosition(new Position(txtfPosition.getText().trim(), new BigDecimal(txtfIncome.getText().trim())));
-
-        Record rec = SalaryCalculator.calculate(emp);
-        RecordsServices.create(rec);
-        EmployeeServices.updateUserState(emp);
-
-        lblWarning.setText("Created new record successfully");
-        lblWarning.setTextFill(Color.GREEN);
-        lblWarning.setVisible(true);
+        // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
     }
 
-    private boolean checkFields() {
-        TextField[] fields = new TextField[]{txtfName, txtfLast, txtfChildren, txtfWork, txtfOT,
-                txtfLoan, txtfPosition, txtfIncome, txtfDeduction};
-        if (exists.isSelected()) {
-            fields = Arrays.copyOfRange(fields, 2, 9);
-        }
-
-        for (TextField field : fields) {
-            if (field.getText().isEmpty()) {
-                updateWarning("Please fill in all required fields");
-                return false;
-            }
-        }
-
-        if (!checkRadio()) {
-            updateWarning("Please select your marital status and gender");
-            return false;
-        }
-
-        if (!validateNumericFields()) {
-            updateWarning("Please enter valid inputs");
-            return false;
-        }
 
 
-        return true;
-    }
 
-    private boolean validateNumericFields() {
-        TextField[] fields = new TextField[]{txtfChildren, txtfWork, txtfOT,
-                txtfLoan, txtfIncome, txtfDeduction};
-
-        for (TextField field : fields) {
-            try {
-                Double.parseDouble(field.getText().trim());
-            }
-            catch (Exception e) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    private boolean checkRadio() {
-        if (exists.isSelected()) return radioMarried.isSelected() || radioNotMarried.isSelected();
-
-    return (radioFemale.isSelected() || radioMale.isSelected()) &&
-                (radioMarried.isSelected() || radioNotMarried.isSelected());
-    }
-
-    private void updateWarning(String warning) {
-        lblWarning.setTextFill(Color.RED);
-        lblWarning.setText(warning);
-        lblWarning.setVisible(true);
-    }
 }

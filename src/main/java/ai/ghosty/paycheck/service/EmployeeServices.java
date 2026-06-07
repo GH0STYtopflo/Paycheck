@@ -13,22 +13,22 @@ import java.time.LocalDate;
 
 public class EmployeeServices {
     public static int create(Employee emp) {
-        String sql = "INSERT INTO employees(id,name, last_name, gender, children, rent, work_hours, overtime, deduction_hours, loan, date, pos_name, pos_base_salary) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO employees(id,name, last_name, gender, marital_status, children, rent, work_hours, overtime, deduction_hours, loan, date, pos_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = DBConnect.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
             ps.setInt(1, emp.getId());
             ps.setString(2, emp.getName());
             ps.setString(3, emp.getLastName());
             ps.setString(4, emp.getGender());
-            ps.setInt(5, emp.getChildren());
-            ps.setInt(6, emp.isRent() ? 1 : 0);
-            ps.setInt(7, emp.getWorkHours());
-            ps.setInt(8, emp.getExtraHours());
-            ps.setInt(9, emp.getDeductionHours());
-            ps.setBigDecimal(10, emp.getLoan());
-            ps.setString(11, emp.getHireDate().toString());
-            ps.setString(12, emp.getPosition() != null ? emp.getPosition().getPosName() : null);
-            ps.setBigDecimal(13, emp.getPosition() != null ? emp.getPosition().getBaseSalaryPerHour() : null);
+            ps.setInt(5, (emp.isMarried()) ? 1 : 0);
+            ps.setInt(6, emp.getChildren());
+            ps.setInt(7, emp.getIsRent() ? 1 : 0);
+            ps.setInt(8, emp.getWorkHours());
+            ps.setInt(9, emp.getExtraHours());
+            ps.setInt(10, emp.getDeductionHours());
+            ps.setBigDecimal(11, emp.getLoan());
+            ps.setString(12, emp.getHireDate().toString());
+            ps.setInt(13, emp.getPosition().getId());
 
             int affected = ps.executeUpdate();
             if (affected == 0) return -1;
@@ -53,6 +53,7 @@ public class EmployeeServices {
                     String name = rs.getString("name");
                     String lastName = rs.getString("last_name");
                     String gender = rs.getString("gender");
+                    boolean isMarried = (rs.getInt("marital_status") == 1);
                     int overtime = rs.getInt("overtime");
                     int children = rs.getInt("children");
                     int workHours = rs.getInt("work_hours");
@@ -60,10 +61,11 @@ public class EmployeeServices {
                     BigDecimal loan = rs.getBigDecimal("loan");
                     LocalDate date = LocalDate.parse(rs.getString("date"));
                     boolean rent = rs.getInt("rent") == 1;
-                    String posName = rs.getString("pos_name");
-                    BigDecimal posBase = rs.getBigDecimal("pos_base_salary");
-                    Position pos = new Position(posName != null ? posName : "NaP", posBase != null ? posBase : BigDecimal.ZERO);
-                    return new Employee(id, name, lastName, gender, overtime, children, workHours, deductionHours, loan, rent, date, pos);
+                    int pos_id = rs.getInt("pos_id");
+                    Position pos = PositionsServices.getPositionById(pos_id);
+
+
+                    return new Employee(id, name, lastName, gender,isMarried , overtime, children, workHours, deductionHours, loan, rent, date, pos);
                 }
             }
         } catch (SQLException e) {
@@ -73,19 +75,19 @@ public class EmployeeServices {
     }
 
     public static void updateUserState(Employee emp) {
-        String sql = "UPDATE employees SET children = ?, rent = ?, work_hours = ?, overtime = ?, deduction_hours = ?," +
-                " loan = ?, pos_name = ?, pos_base_salary = ? WHERE id = ?";
+        String sql = "UPDATE employees SET children = ?, rent = ?, marital_status = ?,work_hours = ?, overtime = ?, deduction_hours = ?," +
+                " loan = ?, pos_id = ?, WHERE id = ?";
 
         try (Connection conn = DBConnect.getConnection()) {
             PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.setInt(1, emp.getChildren());
-            pstmt.setInt(2, emp.isRent() ? 1 : 0);
-            pstmt.setInt(3, emp.getWorkHours());
-            pstmt.setInt(4, emp.getExtraHours());
-            pstmt.setInt(5, emp.getDeductionHours());
-            pstmt.setBigDecimal(6, emp.getLoan());
-            pstmt.setString(7, emp.getPosition() != null ? emp.getPosition().getPosName() : null);
-            pstmt.setBigDecimal(8, emp.getPosition() != null ? emp.getPosition().getBaseSalaryPerHour() : null);
+            pstmt.setInt(2, emp.getIsRent() ? 1 : 0);
+            pstmt.setInt(3, emp.isMarried() ? 1 : 0);
+            pstmt.setInt(4, emp.getWorkHours());
+            pstmt.setInt(5, emp.getExtraHours());
+            pstmt.setInt(6, emp.getDeductionHours());
+            pstmt.setBigDecimal(7, emp.getLoan());
+            pstmt.setInt(8, emp.getPosition().getId());
             pstmt.setInt(9, emp.getId());
 
             pstmt.execute();
