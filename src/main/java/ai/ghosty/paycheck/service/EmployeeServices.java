@@ -13,7 +13,7 @@ import java.time.LocalDate;
 
 public class EmployeeServices {
     public static int create(Employee emp) {
-        String sql = "INSERT INTO employees(id,name, last_name, gender, marital_status, children, rent, work_hours, overtime, deduction_hours, loan, date, pos_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO employees(emp_id,name, last_name, gender, marital_status, children, rent, work_hours, overtime, deduction_hours, loan, date, pos_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = DBConnect.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
             ps.setInt(1, emp.getId());
@@ -44,7 +44,7 @@ public class EmployeeServices {
     }
 
     public static Employee getById(int id) {
-        String sql = "SELECT * FROM employees WHERE id = ?";
+        String sql = "SELECT * FROM employees WHERE emp_id = ?";
         try (Connection conn = DBConnect.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);
@@ -76,7 +76,7 @@ public class EmployeeServices {
 
     public static void updateUserState(Employee emp) {
         String sql = "UPDATE employees SET children = ?, rent = ?, marital_status = ?,work_hours = ?, overtime = ?, deduction_hours = ?," +
-                " loan = ?, pos_id = ?, WHERE id = ?";
+                " loan = ?, pos_id = ?, WHERE emp_id = ?";
 
         try (Connection conn = DBConnect.getConnection()) {
             PreparedStatement pstmt = conn.prepareStatement(sql);

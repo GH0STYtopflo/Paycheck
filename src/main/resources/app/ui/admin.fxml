@@ -7,6 +7,7 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
@@ -87,7 +88,7 @@
                                        <children>
                                           <Label maxWidth="-Infinity" prefHeight="25.0" text="Employee Information">
                                              <font>
-                                                <Font name="System Bold" size="18.0" />
+                                                <Font name="System Bold" size="20.0" />
                                              </font>
                                           </Label>
                                           <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
@@ -135,8 +136,8 @@
                                                 <Label styleClass="form-label" text="Marital Status" />
                                                 <HBox alignment="CENTER" prefHeight="45.0" prefWidth="442.0" spacing="15.0" style="-fx-border-color: #999999; -fx-border-radius: 5; -fx-border-width: 0.5;">
                                                    <children>
-                                                      <RadioButton fx:id="radioMarried" mnemonicParsing="false" onAction="#onMarried" text="Married" />
-                                                      <RadioButton fx:id="radioNotMarried" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onNotMarried" text="Not Married" />
+                                                      <RadioButton fx:id="radioMarried" mnemonicParsing="false" text="Married" />
+                                                      <RadioButton fx:id="radioNotMarried" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="Not Married" />
                                                    </children>
                                                 </HBox>
                                              </children>
@@ -181,8 +182,8 @@
                                                 <Label styleClass="form-label" text="Gender" />
                                                 <HBox alignment="CENTER" maxWidth="-Infinity" prefHeight="45.0" prefWidth="500.0" spacing="15.0" style="-fx-border-color: #999999; -fx-border-radius: 5; -fx-border-width: 0.5;">
                                                    <children>
-                                                      <RadioButton fx:id="radioMale" mnemonicParsing="false" onAction="#onMale" text="Male" />
-                                                      <RadioButton fx:id="radioFemale" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onFemale" text="Female" />
+                                                      <RadioButton fx:id="radioMale" mnemonicParsing="false" text="Male" />
+                                                      <RadioButton fx:id="radioFemale" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="Female" />
                                                    </children>
                                                 </HBox>
                                              </children>
@@ -211,6 +212,31 @@
                                           </VBox>
                                        </children>
                                     </HBox>
+                                    <Separator prefWidth="200.0" />
+                                    <Label text="User Creditentials">
+                                       <font>
+                                          <Font name="System Bold" size="17.0" />
+                                       </font>
+                                    </Label>
+                                    <HBox alignment="CENTER" layoutX="35.0" layoutY="563.0" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
+                                       <children>
+                                          <VBox spacing="5.0">
+                                             <children>
+                                                <Label styleClass="form-label" text="Username" />
+                                                <TextField fx:id="txtfUsername" maxWidth="440.0" prefHeight="45.0" prefWidth="440.0" promptText="JordanCarter" styleClass="form-input" />
+                                             </children>
+                                          </VBox>
+                                          <VBox layoutX="217.0" layoutY="10.0" spacing="5.0">
+                                             <children>
+                                                <Label styleClass="form-label" text="Password" />
+                                                <PasswordField fx:id="txtfPassword" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="45.0" prefWidth="440.0" styleClass="form-label" />
+                                             </children>
+                                          </VBox>
+                                       </children>
+                                       <VBox.margin>
+                                          <Insets top="25.0" />
+                                       </VBox.margin>
+                                    </HBox>
                                  </children>
                               </VBox>
 
@@ -221,7 +247,7 @@
                                  <children>
                                     <Label text="Position Information">
                                        <font>
-                                          <Font name="System Bold" size="18.0" />
+                                          <Font name="System Bold" size="20.0" />
                                        </font>
                                     </Label>
                                     <Separator prefWidth="200.0" />
@@ -236,7 +262,7 @@
 
                               <HBox alignment="CENTER_LEFT" spacing="10.0">
                                  <children>
-                                    <Button fx:id="register" mnemonicParsing="false" onAction="#onRegister" prefHeight="45.0" prefWidth="250.0" styleClass="action-btn" text="Register Employee">
+                                    <Button fx:id="register" mnemonicParsing="false" onAction="#OnUpdate" prefHeight="45.0" prefWidth="250.0" styleClass="action-btn" text="Register Employee">
                                        <font>
                                           <Font name="System Bold" size="16.0" />
                                        </font>
@@ -301,17 +327,19 @@
                                           </VBox>
                                        </children>
                                     </GridPane>
-                                    <Button fx:id="btnCreatePosition" mnemonicParsing="false" prefHeight="45.0" prefWidth="250.0" styleClass="action-btn" text="Create Position">
-                                       <font>
-                                          <Font name="System Bold" size="16.0" />
-                                       </font>
-                                       <cursor>
-                                          <Cursor fx:constant="HAND" />
-                                       </cursor>
-                                       <VBox.margin>
-                                          <Insets top="10.0" />
-                                       </VBox.margin>
-                                    </Button>
+                                    <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="15.0">
+                                       <children>
+                                          <Button fx:id="btnCreatePosition" mnemonicParsing="false" onAction="#onCreatePositon" prefHeight="45.0" prefWidth="250.0" styleClass="action-btn" text="Create Position">
+                                             <font>
+                                                <Font name="System Bold" size="16.0" />
+                                             </font>
+                                             <cursor>
+                                                <Cursor fx:constant="HAND" />
+                                             </cursor>
+                                          </Button>
+                                          <Label fx:id="lblWarning1" text="Label" visible="false" />
+                                       </children>
+                                    </HBox>
                                  </children>
                               </VBox>
                               <VBox spacing="15.0" styleClass="card" VBox.vgrow="ALWAYS">

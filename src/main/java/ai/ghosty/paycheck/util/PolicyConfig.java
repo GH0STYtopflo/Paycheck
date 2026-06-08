@@ -6,10 +6,10 @@ import java.io.*;
 import java.math.BigDecimal;
 import java.nio.file.Path;
 
-public class ConfManager {
+public class PolicyConfig {
     private final static Path JSON_FILE = Path.of("../Policy.json");
 
-    public static void createPolicyConf(Policy policy) {
+    public static void updatePolicyConf(Policy policy) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(JSON_FILE.toFile()))) {
             String text = String.format("{\n" +
                     "  \"INCOME_TAX_RATE\": %s,\n" +
@@ -63,12 +63,14 @@ public class ConfManager {
                     i++;
                 }
             }
+
+            return new Policy(values[0], values[1], values[2], values[3],values[4],values[5],values[6],
+                    values[7],values[8],values[9],values[10]);
         }
         catch (IOException e) {
             System.err.println("[error] failed to read policy configuration");
         }
 
-        return new Policy(values[0], values[1], values[2], values[3],values[4],values[5],values[6],
-                values[7],values[8],values[9],values[10]);
+        return new Policy();
     }
 }

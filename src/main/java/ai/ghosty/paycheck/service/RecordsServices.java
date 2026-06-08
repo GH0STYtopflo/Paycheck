@@ -14,7 +14,7 @@ import java.util.Map;
 public class RecordsServices {
 
     public static int create(Record record) {
-        String sql = "INSERT INTO records(id, baseincome, overtime, child_allowance, accommodation_allowance, meal_allowance, recreation_allowance, women_extra, tax, loan, insurance, healthcare, social_security, deduction_from_hours, gross, total_deduction, net_income, date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO records(rec_id, baseincome, overtime, child_allowance, accommodation_allowance, meal_allowance, recreation_allowance, women_extra, tax, loan, insurance, healthcare, social_security, deduction_from_hours, gross, total_deduction, net_income, date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?)";
         try (Connection conn = DBConnect.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
             ps.setInt(1, record.getId());
@@ -50,7 +50,7 @@ public class RecordsServices {
     }
 
     public static ArrayList<Record> getById(int id) {
-        String sql = "SELECT * FROM records WHERE id = ? ORDER BY date DESC";
+        String sql = "SELECT * FROM records WHERE rec_id = ? ORDER BY date DESC";
         try (Connection conn = DBConnect.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);

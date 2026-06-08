@@ -12,7 +12,7 @@ import java.util.List;
 
 public class PositionsServices {
     public static void createPosition(Position position) {
-        String sql = "INSERT INTO positions(pos_id, title, income_per_hour) VALUES (?, ?, ?))";
+        String sql = "INSERT INTO positions(pos_id, title, income_per_hour) VALUES (?, ?, ?)";
 
         try (Connection conn = DBConnect.getConnection()) {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -23,7 +23,7 @@ public class PositionsServices {
             ps.execute();
         }
         catch (SQLException e) {
-            System.err.println("[error] failed to create position entry");
+            System.err.println("[error] failed to create position entry: " + e.getMessage());
         }
     }
 
@@ -39,7 +39,7 @@ public class PositionsServices {
             ps.execute();
         }
         catch (SQLException e) {
-            System.err.println("[error] failed to update position entry");
+            System.err.println("[error] failed to update position entry: " + e.getMessage());
         }
     }
 
@@ -57,7 +57,7 @@ public class PositionsServices {
             }
         }
         catch (SQLException e) {
-            System.err.println("[error] failed to get position entry");
+            System.err.println("[error] failed to get position entry: " + e.getMessage());
         }
 
         return null;
@@ -75,7 +75,7 @@ public class PositionsServices {
                 positions.add(new Position(rs.getInt("pos_id"), rs.getString("title"), rs.getBigDecimal("income_per_hour")));
             }
         } catch (SQLException e) {
-            System.err.println("[error] failed to get all positions");
+            System.err.println("[error] failed to get all positions: " + e.getMessage());
         }
 
         return positions;

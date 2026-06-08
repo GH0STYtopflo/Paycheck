@@ -12,9 +12,12 @@ ai/ghosty/paycheck/service/UserServices.class
 ai/ghosty/paycheck/util/Encryption.class
 ai/ghosty/paycheck/model/Policy.class
 ai/ghosty/paycheck/db/DBConnect.class
-ai/ghosty/paycheck/controller/ConfirmController.class
+ai/ghosty/paycheck/model/Record.class
+ai/ghosty/paycheck/util/PolicyConfig.class
 ai/ghosty/paycheck/authentication/QuickLogin.class
 ai/ghosty/paycheck/util/IDGen.class
 ai/ghosty/paycheck/service/EmployeeServices.class
 ai/ghosty/paycheck/Launcher.class
+ai/ghosty/paycheck/service/PositionsServices.class
+ai/ghosty/paycheck/util/FieldValidation.class
 ai/ghosty/paycheck/db/DBInit.class

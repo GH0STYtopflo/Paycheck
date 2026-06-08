@@ -10,7 +10,7 @@ import java.sql.SQLException;
 
 public class UserServices {
     public static boolean createUser(User user) {
-        String sql = "INSERT INTO users(id, username, pass_hash, role) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO users(user_id, username, pass_hash, role) VALUES (?, ?, ?, ?)";
         try (Connection conn = DBConnect.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, user.getId());
@@ -25,13 +25,13 @@ public class UserServices {
     }
 
     public static User getUserByID(int id) {
-        String sql = "SELECT id, username, pass_hash, role FROM users WHERE id = ?";
+        String sql = "SELECT * FROM users WHERE user_id = ?";
         try (Connection conn = DBConnect.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    return new User(rs.getInt("id"), rs.getString("username"), rs.getString("pass_hash"), rs.getString("role"));
+                    return new User(rs.getInt("user_id"), rs.getString("username"), rs.getString("pass_hash"), rs.getString("role"));
                 }
             }
         } catch (SQLException e) {
@@ -41,31 +41,14 @@ public class UserServices {
         return null;
     }
 
-    public static boolean idExists(int id) {
-        String sql = "SELECT id, username, pass_hash, role FROM users WHERE id = ?";
-        try (Connection conn = DBConnect.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, id);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return true;
-                }
-            }
-        } catch (SQLException e) {
-            System.err.println("[error] failed to get user: " + e.getMessage());
-        }
-
-        return false;
-    }
-
     public static User getUserByUsername(String username) {
-        String sql = "SELECT id, username, pass_hash, role FROM users WHERE username = ?";
+        String sql = "SELECT * FROM users WHERE username = ?";
         try (Connection conn = DBConnect.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, username);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    return new User(rs.getInt("id"), rs.getString("username"), rs.getString("pass_hash"), rs.getString("role"));
+                    return new User(rs.getInt("user_id"), rs.getString("username"), rs.getString("pass_hash"), rs.getString("role"));
                 }
             }
         } catch (SQLException e) {
@@ -76,7 +59,7 @@ public class UserServices {
     }
 
     public static boolean usernameExists(String username) {
-        String sql = "SELECT id, username, pass_hash, role FROM users WHERE username = ?";
+        String sql = "SELECT * FROM users WHERE username = ?";
         try (Connection conn = DBConnect.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, username);

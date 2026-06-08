@@ -3,45 +3,25 @@ package ai.ghosty.paycheck.controller;
 import ai.ghosty.paycheck.model.Employee;
 import ai.ghosty.paycheck.model.Position;
 import ai.ghosty.paycheck.model.Record;
-import ai.ghosty.paycheck.service.EmployeeServices;
-import ai.ghosty.paycheck.service.PositionsServices;
-import ai.ghosty.paycheck.service.RecordsServices;
-import ai.ghosty.paycheck.service.SalaryCalculator;
+import ai.ghosty.paycheck.model.User;
+import ai.ghosty.paycheck.service.*;
+import ai.ghosty.paycheck.util.Encryption;
 import ai.ghosty.paycheck.util.FieldValidation;
+import ai.ghosty.paycheck.util.PolicyConfig;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Group;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
-import java.io.IOException;
-import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class AdminController extends Controller {
-    @FXML private TextField txtfName, txtfLast, txtfChildren, txtfWork, txtfOT,
-            txtfLoan, txtfDeduction;
-    @FXML private Label lblWarning;
-    @FXML private RadioButton radioMarried, radioNotMarried, radioFemale, radioMale;
-    @FXML private DatePicker datePicker;
-    @FXML private CheckBox rent;
-    @FXML private Button register;
-    @FXML private ToggleButton exists;
-    @FXML private TextField txtfID;
-    @FXML private ComboBox<String> comboPositions;
-
-    private RadioButton[] genderGroup, marriedGroup;
-    private List<Position> positions;
-
-
     @FXML
     private void onClose(){close();}
     @FXML
@@ -55,10 +35,27 @@ public class AdminController extends Controller {
         this.positions = PositionsServices.getAllPositions();
         setUpPosCombo();
         setUpRadiobuttons();
+        populatePositionsTable();
         show();
     }
 
     // ||||||||||||||||||||||||||||||||| 1st tab ||||||||||||||||||||||||||||||||||
+    @FXML private TextField txtfName, txtfLast, txtfChildren, txtfWork, txtfOT,
+            txtfLoan, txtfDeduction, txtfUsername;
+    @FXML private PasswordField txtfPassword;
+    @FXML private Label lblWarning;
+    @FXML private RadioButton radioMarried, radioNotMarried, radioFemale, radioMale;
+    @FXML private DatePicker datePicker;
+    @FXML private CheckBox rent;
+    @FXML private Button register;
+    @FXML private ToggleButton exists;
+    @FXML private TextField txtfID;
+    @FXML private ComboBox<String> comboPositions;
+
+    private RadioButton[] genderGroup, marriedGroup;
+    private List<Position> positions;
+
+
     private void show() {
         ownstage.setResizable(false);
         ownstage.initStyle(StageStyle.TRANSPARENT);
@@ -80,14 +77,13 @@ public class AdminController extends Controller {
          genderGroup = new RadioButton[]{radioMale, radioFemale};
     }
 
-    private ObservableList<String> setUpPosCombo() {
+    private void setUpPosCombo() {
         List<String> titles = new ArrayList<>();
 
         for (Position position : positions) {
             titles.add(position.getTitle() + "-" + position.getId());
         }
-
-        return FXCollections.observableList(titles);
+        comboPositions.setItems(FXCollections.observableList(titles));
     }
 
     @FXML
@@ -95,8 +91,10 @@ public class AdminController extends Controller {
         txtfID.setDisable(!txtfID.isDisabled());
         txtfName.setDisable(!txtfName.isDisabled());
         txtfLast.setDisable(!txtfLast.isDisabled());
+        txtfUsername.setDisable(!txtfUsername.isDisabled());
+        txtfPassword.setDisable(!txtfPassword.isDisabled());
 
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < 2; i++) {
             marriedGroup[i].setDisable(!marriedGroup[i].isDisabled());
             genderGroup[i].setDisable(!genderGroup[i].isDisabled());
         }
@@ -107,13 +105,19 @@ public class AdminController extends Controller {
     }
 
     @FXML
-    private void OnRegister() {
+    private void OnUpdate() {
+        if (comboPositions.getSelectionModel().getSelectedIndex() == -1) {
+            FieldValidation.updateWarningText((byte) 1, "Please select a position", lblWarning);
+            return;
+        }
+
         if (!exists.isSelected()) {
             if (!FieldValidation.validateFields(new TextField[]{txtfName, txtfLast}, (byte) 1, lblWarning)) return;
             if (!FieldValidation.validateFields(new TextField[]{txtfChildren, txtfOT,
                     txtfDeduction , txtfWork, txtfLoan}, (byte) 3, lblWarning)) return;
 
             if (!checkRadioButtons((byte) 3)) return;
+            if (!validateCredentials()) return;
         }
         else {
             if (!FieldValidation.validateFields(new TextField[]{txtfID, txtfChildren, txtfOT,
@@ -134,9 +138,7 @@ public class AdminController extends Controller {
             }
 
             if (!radioSelected) {
-                lblWarning.setTextFill(Color.RED);
-                lblWarning.setText("Please select a gender");
-                lblWarning.setVisible(true);
+                FieldValidation.updateWarningText((byte) 1, "Please select a gender", lblWarning);
                 return false;
             }
         }
@@ -148,9 +150,7 @@ public class AdminController extends Controller {
             }
 
             if (!radioSelected) {
-                lblWarning.setTextFill(Color.RED);
-                lblWarning.setText("Please select a marital status");
-                lblWarning.setVisible(true);
+                FieldValidation.updateWarningText((byte) 1, "Please select a marital status", lblWarning);
                 return false;
             }
         }
@@ -158,7 +158,34 @@ public class AdminController extends Controller {
         return true;
     }
 
+    private boolean validateCredentials() {
+        if (txtfUsername.getText().isEmpty() || txtfPassword.getText().isEmpty()) {
+            FieldValidation.updateWarningText((byte) 1, "Username can't be empty", lblWarning);
+            return false;
+        }
+
+        if (txtfUsername.getText().length() < 4) {
+            FieldValidation.updateWarningText((byte) 1, "Username must be longer than 4 characters", lblWarning);
+            return false;
+        }
+
+        if (txtfUsername.getText().contains(" ")) {
+            FieldValidation.updateWarningText((byte) 1, "Username cannot contain spaces", lblWarning);
+            return false;
+        }
+
+        if (txtfPassword.getText().length() < 6) {
+            FieldValidation.updateWarningText((byte) 1, "Password must be longer than 6 characters", lblWarning);
+            return false;
+        }
+
+
+        return true;
+    }
+
     private void register() {
+        Record rec;
+
         if (!exists.isSelected()) {
             Employee emp = new Employee(txtfName.getText().trim(), txtfLast.getText().trim(),
                     (radioMale.isSelected()) ? "m" : "f", radioMarried.isSelected(),
@@ -166,8 +193,13 @@ public class AdminController extends Controller {
                     Integer.parseInt(txtfWork.getText().trim()), Integer.parseInt(txtfDeduction.getText().trim()),
                     new BigDecimal(txtfLoan.getText().trim()), rent.isSelected(), datePicker.getValue(),
                     positions.get(comboPositions.getSelectionModel().getSelectedIndex()));
+            User user = new User(txtfUsername.getText().trim(), Encryption.stringToSHA256(txtfPassword.getText().trim()),
+                    "user");
 
-            // TODO Record rec = SalaryCalculator.calculate(emp, ) **handle policy bullsh
+            rec = SalaryCalculator.calculate(emp, PolicyConfig.readPolicyConf());
+            EmployeeServices.create(emp);
+            RecordsServices.create(rec);
+            UserServices.createUser(user);
         }
         else {
             Employee emp = EmployeeServices.getById(Integer.parseInt(txtfID.getText()));
@@ -179,11 +211,48 @@ public class AdminController extends Controller {
             emp.setExtraHours(Integer.parseInt(txtfOT.getText().trim()));
             emp.setDeductionHours(Integer.parseInt(txtfDeduction.getText().trim()));
 
-            // TODO Record rec = SalaryCalculator.calculate(emp, ) **handle policy bullsh
+            rec = SalaryCalculator.calculate(emp, PolicyConfig.readPolicyConf());
+            EmployeeServices.updateUserState(emp);
         }
 
-        // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+        RecordsServices.create(rec);
+        FieldValidation.updateWarningText((byte) 0, "Paycheck record created successfully", lblWarning);
     }
+
+    // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+    private @FXML TextField txtfNewPosTitle, txtfNewPosIncome;
+    private @FXML Label lblWarning1;
+    private @FXML Button btnCreatePosition;
+    private @FXML TableView<Position> tablePositions;
+    private @FXML TableColumn<Position, String> colPosTitle;
+    private @FXML TableColumn<Position, Integer> colPosId;
+    private @FXML TableColumn<Position, BigDecimal> colPosIncome;
+
+
+    private void populatePositionsTable() {
+        colPosId.setCellValueFactory(new PropertyValueFactory<>("id"));
+        colPosTitle.setCellValueFactory(new PropertyValueFactory<>("title"));
+        colPosIncome.setCellValueFactory(new PropertyValueFactory<>("salaryPerHour"));
+
+        tablePositions.setItems(FXCollections.observableList(PositionsServices.getAllPositions()));
+    }
+
+    @FXML
+    private void onCreatePositon() {
+        FieldValidation.validateFields(new TextField[]{txtfNewPosTitle}, (byte) 1, lblWarning1);
+        FieldValidation.validateFields(new TextField[]{txtfNewPosIncome}, (byte) 3, lblWarning1);
+        createPosition();
+        populatePositionsTable();
+        FieldValidation.updateWarningText((byte) 0, "Position created successfully", lblWarning1);
+    }
+
+    private void createPosition() {
+        Position position = new Position(txtfNewPosTitle.getText().trim(),
+                new BigDecimal(txtfNewPosIncome.getText().trim()));
+
+        PositionsServices.createPosition(position);
+    }
+
 
 
 

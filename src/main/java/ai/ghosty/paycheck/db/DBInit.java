@@ -30,7 +30,7 @@ public class DBInit {
                          "emp_id INTEGER PRIMARY KEY AUTOINCREMENT," +
                          "name TEXT NOT NULL," +
                          "last_name TEXT NOT NULL," +
-                         "pos_id INTEGER NOT NULL" +
+                         "pos_id INTEGER NOT NULL," +
                          "gender TEXT NOT NULL," +
                          "marital_status REAL NOT NULL CHECK (marital_status IN (0,1))," +
                          "children INTEGER DEFAULT 0," +
