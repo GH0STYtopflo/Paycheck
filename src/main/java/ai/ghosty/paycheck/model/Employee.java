@@ -20,7 +20,7 @@ public class Employee {
                     int workHours, int deductionHours, BigDecimal loan,
                     boolean isRent, LocalDate hireDate, Position position) {
 
-        this.id = IDGen.generateUniqueID();
+        this.id = IDGen.generateUniqueID(Tables.EMPLOYEES);
         this.name = name;
         this.lastName = lastName;
         this.gender = gender;

@@ -22,7 +22,7 @@ public class SalaryCalculator {
         calculateDeductions(record, employee, hourlyRate, policy);
 
         record.setNetIncome(record.getGrossIncome().subtract(record.getTotalDeductions()));
-        record.setDate(LocalDate.now() + "-" + LocalTime.now().toString());
+        record.setDate(LocalDate.now() + " - " + LocalTime.now().truncatedTo(ChronoUnit.SECONDS));
 
         return record;
     }

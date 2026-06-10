@@ -81,6 +81,18 @@
     -fx-background-color: #006400;
 }
 
+.reset-button {
+    -fx-background-radius: 30px;
+    -fx-background-color: RED;
+    -fx-text-fill: WHITE;
+    -fx-effect: dropshadow(three-pass-box, rgba(62, 39, 35, 0.15), 5, 0, 0, 0);
+}
+
+.reset-btn:hover {
+    -fx-background-color: #ff7070;
+    -fx-text-fill: BLACK;
+}
+
 .admin-tabs .tab-header-area {
     -fx-padding: 0 0 0 20;
 }

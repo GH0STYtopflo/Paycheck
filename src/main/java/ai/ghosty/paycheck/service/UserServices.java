@@ -1,12 +1,14 @@
 package ai.ghosty.paycheck.service;
 
 import ai.ghosty.paycheck.db.DBConnect;
+import ai.ghosty.paycheck.model.Role;
 import ai.ghosty.paycheck.model.User;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Locale;
 
 public class UserServices {
     public static boolean createUser(User user) {
@@ -16,7 +18,7 @@ public class UserServices {
             ps.setInt(1, user.getId());
             ps.setString(2, user.getUsername());
             ps.setString(3, user.getPasswordHash());
-            ps.setString(4, user.getRole());
+            ps.setString(4, user.getRole().roleTitle);
             return ps.executeUpdate() == 1;
         } catch (SQLException e) {
             System.err.println("[error] failed to create user: " + e.getMessage());
@@ -31,7 +33,8 @@ public class UserServices {
             ps.setInt(1, id);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    return new User(rs.getInt("user_id"), rs.getString("username"), rs.getString("pass_hash"), rs.getString("role"));
+                    return new User(rs.getInt("user_id"), rs.getString("username"),
+                            rs.getString("pass_hash"), Role.valueOf(rs.getString("role").toUpperCase(Locale.ROOT)));
                 }
             }
         } catch (SQLException e) {
@@ -48,7 +51,8 @@ public class UserServices {
             ps.setString(1, username);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    return new User(rs.getInt("user_id"), rs.getString("username"), rs.getString("pass_hash"), rs.getString("role"));
+                    return new User(rs.getInt("user_id"), rs.getString("username"),
+                            rs.getString("pass_hash"), Role.valueOf(rs.getString("role").toUpperCase()));
                 }
             }
         } catch (SQLException e) {

@@ -16,7 +16,7 @@ public class RecordsServices {
     public static int create(Record record) {
         String sql = "INSERT INTO records(rec_id, baseincome, overtime, child_allowance, accommodation_allowance, meal_allowance, recreation_allowance, women_extra, tax, loan, insurance, healthcare, social_security, deduction_from_hours, gross, total_deduction, net_income, date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?)";
         try (Connection conn = DBConnect.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, record.getId());
             ps.setBigDecimal(2, record.getBaseIncome());
             ps.setBigDecimal(3, record.getOtPay());
@@ -36,12 +36,8 @@ public class RecordsServices {
             ps.setBigDecimal(17, record.getNetIncome());
             ps.setString(18, record.getDate());
 
-            int affected = ps.executeUpdate();
-            if (affected == 0) return -1;
+            ps.executeUpdate();
 
-            try (ResultSet keys = ps.getGeneratedKeys()) {
-                if (keys.next()) return keys.getInt(1);
-            }
         } catch (SQLException e) {
             System.err.println("[error] failed to create record: " + e.getMessage());
         }

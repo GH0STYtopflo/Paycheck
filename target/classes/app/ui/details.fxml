@@ -13,11 +13,11 @@
 <?import javafx.scene.shape.SVGPath?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="850.0" styleClass="rootPane" stylesheets="@detailsStyle.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ai.ghosty.paycheck.controller.DetailsController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="850.0" styleClass="rootPane" stylesheets="@detailsStyle.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ai.ghosty.paycheck.controller.DetailsController">
    <center>
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="15.0" BorderPane.alignment="CENTER">
          <children>
-            <VBox alignment="TOP_CENTER" layoutX="235.0" layoutY="10.0" prefHeight="600.0" prefWidth="400.0" spacing="10.0" styleClass="card">
+            <VBox alignment="TOP_CENTER" layoutX="235.0" layoutY="10.0" prefHeight="600.0" prefWidth="400.0" spacing="5.0" styleClass="card">
                <HBox.margin>
                   <Insets bottom="10.0" />
                </HBox.margin>
@@ -107,7 +107,7 @@
                   </HBox>
                </children>
             </VBox>
-            <VBox alignment="TOP_CENTER" layoutX="235.0" layoutY="10.0" prefHeight="600.0" prefWidth="400.0" spacing="10.0" styleClass="card">
+            <VBox alignment="TOP_CENTER" layoutX="235.0" layoutY="10.0" prefHeight="600.0" prefWidth="400.0" spacing="5.0" styleClass="card">
                <children>
                   <Label text="Deductions" textFill="#bf0f0f">
                      <font>
@@ -232,7 +232,7 @@
                   <Insets left="15.0" right="15.0" top="5.0" />
                </VBox.margin>
             </HBox>
-            <VBox fx:id="credits" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="130.0" prefWidth="100.0" styleClass="card">
+            <VBox fx:id="credits" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="150.0" prefWidth="100.0" styleClass="card">
                <VBox.margin>
                   <Insets left="16.0" right="16.0" top="15.0" />
                </VBox.margin>
@@ -271,7 +271,7 @@
                         <Label fx:id="lblPositionTitle" text="N/A" />
                      </children>
                      <VBox.margin>
-                        <Insets bottom="5.0" left="15.0" right="15.0" />
+                        <Insets left="15.0" right="15.0" />
                      </VBox.margin>
                   </HBox>
                   <HBox spacing="10.0">
@@ -279,7 +279,16 @@
                         <Label maxWidth="Infinity" text="Hire Date:" HBox.hgrow="ALWAYS" />
                         <Label fx:id="lblHireDate" text="N/A" />
                      </children>
-                     <VBox.margin><Insets bottom="5.0" left="15.0" right="15.0" /></VBox.margin>
+                     <VBox.margin><Insets left="15.0" right="15.0" /></VBox.margin>
+                  </HBox>
+                  <HBox layoutX="25.0" layoutY="113.0" spacing="10.0">
+                     <children>
+                        <Label maxWidth="Infinity" text="Employee Tenure:" HBox.hgrow="ALWAYS" />
+                        <Label fx:id="lblTenure" text="N/A" />
+                     </children>
+                     <VBox.margin>
+                        <Insets left="15.0" right="15.0" />
+                     </VBox.margin>
                   </HBox>
                </children>
             </VBox>

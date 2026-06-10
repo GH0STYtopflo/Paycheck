@@ -11,6 +11,8 @@
 /mnt/data/Projects/Paycheck/src/main/java/ai/ghosty/paycheck/model/Policy.java
 /mnt/data/Projects/Paycheck/src/main/java/ai/ghosty/paycheck/model/Position.java
 /mnt/data/Projects/Paycheck/src/main/java/ai/ghosty/paycheck/model/Record.java
+/mnt/data/Projects/Paycheck/src/main/java/ai/ghosty/paycheck/model/Role.java
+/mnt/data/Projects/Paycheck/src/main/java/ai/ghosty/paycheck/model/Tables.java
 /mnt/data/Projects/Paycheck/src/main/java/ai/ghosty/paycheck/model/User.java
 /mnt/data/Projects/Paycheck/src/main/java/ai/ghosty/paycheck/service/EmployeeServices.java
 /mnt/data/Projects/Paycheck/src/main/java/ai/ghosty/paycheck/service/PositionsServices.java

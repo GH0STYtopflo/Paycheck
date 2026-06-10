@@ -32,17 +32,17 @@ public class Policy {
                   BigDecimal RECREATION_PER_FAMILY_MEMBER, BigDecimal CHILD_ALLOWANCE_PER_CHILD,
                   BigDecimal WOMEN_EXTRA) {
         
-        this.INCOME_TAX_RATE = Objects.requireNonNullElseGet(INCOME_TAX_RATE, (Supplier<? extends BigDecimal>) new BigDecimal("0.15"));
-        this.SOCIAL_SECURITY_RATE = Objects.requireNonNullElseGet(SOCIAL_SECURITY_RATE, (Supplier<? extends BigDecimal>) new BigDecimal("0.062"));
-        this.HEALTHCARE_RATE = Objects.requireNonNullElseGet(HEALTHCARE_RATE, (Supplier<? extends BigDecimal>) new BigDecimal("0.0145"));
-        this.INSURANCE_RATE =  Objects.requireNonNullElseGet(INSURANCE_RATE, (Supplier<? extends BigDecimal>) new BigDecimal("0.02"));
-        this.OVERTIME_MULTIPLIER = Objects.requireNonNullElseGet(OVERTIME_MULTIPLIER, (Supplier<? extends BigDecimal>) new BigDecimal("1.5"));
-        this.MAX_LOAN_REPAY_RATE = Objects.requireNonNullElseGet(MAX_LOAN_REPAY_RATE, (Supplier<? extends BigDecimal>) new BigDecimal("0.10"));
-        this.ACCOMMODATION_FLAT_RATE = Objects.requireNonNullElseGet(ACCOMMODATION_FLAT_RATE, (Supplier<? extends BigDecimal>) new BigDecimal("500.00"));
-        this.MEAL_ALLOWANCE_FLAT_RATE = Objects.requireNonNullElseGet(MEAL_ALLOWANCE_FLAT_RATE, (Supplier<? extends BigDecimal>) new BigDecimal("100.00"));
-        this.RECREATION_PER_FAMILY_MEMBER = Objects.requireNonNullElseGet(RECREATION_PER_FAMILY_MEMBER, (Supplier<? extends BigDecimal>) new BigDecimal("25.00"));
-        this.CHILD_ALLOWANCE_PER_CHILD = Objects.requireNonNullElseGet(CHILD_ALLOWANCE_PER_CHILD, (Supplier<? extends BigDecimal>) new BigDecimal("75"));
-        this.WOMEN_EXTRA = Objects.requireNonNullElseGet(WOMEN_EXTRA, (Supplier<? extends BigDecimal>) new BigDecimal("100"));
+        this.INCOME_TAX_RATE = Objects.requireNonNullElseGet(INCOME_TAX_RATE, () -> (new BigDecimal("0.15")));
+        this.SOCIAL_SECURITY_RATE = Objects.requireNonNullElseGet(SOCIAL_SECURITY_RATE, () -> new BigDecimal("0.062"));
+        this.HEALTHCARE_RATE = Objects.requireNonNullElseGet(HEALTHCARE_RATE, () -> new BigDecimal("0.0145"));
+        this.INSURANCE_RATE =  Objects.requireNonNullElseGet(INSURANCE_RATE, () -> new BigDecimal("0.02"));
+        this.OVERTIME_MULTIPLIER = Objects.requireNonNullElseGet(OVERTIME_MULTIPLIER, () -> new BigDecimal("1.5"));
+        this.MAX_LOAN_REPAY_RATE = Objects.requireNonNullElseGet(MAX_LOAN_REPAY_RATE, () -> new BigDecimal("0.10"));
+        this.ACCOMMODATION_FLAT_RATE = Objects.requireNonNullElseGet(ACCOMMODATION_FLAT_RATE, () -> new BigDecimal("500.00"));
+        this.MEAL_ALLOWANCE_FLAT_RATE = Objects.requireNonNullElseGet(MEAL_ALLOWANCE_FLAT_RATE, () -> new BigDecimal("100.00"));
+        this.RECREATION_PER_FAMILY_MEMBER = Objects.requireNonNullElseGet(RECREATION_PER_FAMILY_MEMBER, () -> new BigDecimal("25.00"));
+        this.CHILD_ALLOWANCE_PER_CHILD = Objects.requireNonNullElseGet(CHILD_ALLOWANCE_PER_CHILD, () -> new BigDecimal("75"));
+        this.WOMEN_EXTRA = Objects.requireNonNullElseGet(WOMEN_EXTRA, () -> new BigDecimal("100"));
     }
 
     public BigDecimal getINCOME_TAX_RATE() {
@@ -87,5 +87,36 @@ public class Policy {
 
     public BigDecimal getWOMEN_EXTRA() {
         return WOMEN_EXTRA;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("{\n");
+        sb.append("INCOME TAX RATE: " + INCOME_TAX_RATE);
+        sb.append(",\n");
+        sb.append("SOCIAL SECURITY: " + SOCIAL_SECURITY_RATE);
+        sb.append(",\n");
+        sb.append("HEALTHCARE: " + HEALTHCARE_RATE);
+        sb.append(",\n");
+        sb.append("INSURANCE: " + INSURANCE_RATE);
+        sb.append(",\n");
+        sb.append("OT: " + OVERTIME_MULTIPLIER);
+        sb.append(",\n");
+        sb.append("MAX LOAN: " + MAX_LOAN_REPAY_RATE);
+        sb.append(",\n");
+        sb.append("ACCOMMODATION: "+ ACCOMMODATION_FLAT_RATE);
+        sb.append(",\n");
+        sb.append("MEAL: " + MEAL_ALLOWANCE_FLAT_RATE);
+        sb.append(",\n");
+        sb.append("RECREATION: " + RECREATION_PER_FAMILY_MEMBER);
+        sb.append(",\n");
+        sb.append("CHILD ALLOWANCE: " + CHILD_ALLOWANCE_PER_CHILD);
+        sb.append(",\n");
+        sb.append("WOMEN EXTRA: " + WOMEN_EXTRA);
+
+
+        return sb.toString();
     }
 }

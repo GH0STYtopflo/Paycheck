@@ -11,31 +11,44 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import ai.ghosty.paycheck.model.Record;
 
 public class DetailsController extends Controller {
     @FXML private Label lblTotalPay;
 
-    // employee info
-    @FXML private Label lblId, lblFirstName, lblLastName, lblGender, lblHireDate, lblPositionTitle;
+    @FXML private Label lblId, lblFirstName, lblLastName, lblGender,
+            lblHireDate, lblPositionTitle, lblTenure;
 
-    // period info (idk really i hate clean code)
     @FXML private ComboBox<String> comboPeriod;
 
-    // payments
     @FXML private Label lblBaseIncome, lblOt, lblAccommodationAllowance, lblMealAllowance,
             lblRecreationAllowance, lblChildAllowance, lblWomenExtra, lblGrossIncome;
 
-    // deductions
     @FXML private Label lblTax, lblSocialSecurity, lblHealthcare, lblInsurance,
             lblDeductionFromHours, lblLoanRepay, lblTotalDeductions;
+
+    @FXML
+    private void onClose() { close(); }
+
+    @FXML
+    private void onMinimize() { minimize(); }
+
+    private void show() {
+        ownstage.setResizable(false);
+        ownstage.initStyle(StageStyle.TRANSPARENT);
+        ownstage.setTitle("Details");
+        setMovable();
+        ownstage.show();
+    }
 
     private ArrayList<Record> list;
 
     // ATTENTION! argument pattern:
-    // initialize(stage, Employee, SalaryCalculator)
+    // initialize(stage, Employee, Paycheck Record)
     @Override
     public void initialize(Object... args) {
         this.ownstage = (Stage) args[0];
@@ -53,20 +66,6 @@ public class DetailsController extends Controller {
         if (!list.isEmpty() && list.getFirst() != null) populateSalary(list.getFirst());
     }
 
-    @FXML
-    private void onClose() { close(); }
-
-    @FXML
-    private void onMinimize() { minimize(); }
-
-    private void show() {
-        ownstage.setResizable(false);
-        ownstage.initStyle(StageStyle.TRANSPARENT);
-        ownstage.setTitle("Details");
-        setMovable();
-        ownstage.show();
-    }
-
     private void populateEmployee(Employee emp) {
         lblId.setText(String.valueOf(emp.getId()));
         lblFirstName.setText(emp.getName());
@@ -74,6 +73,8 @@ public class DetailsController extends Controller {
         lblGender.setText(emp.getGender());
         lblHireDate.setText(emp.getHireDate().format(DateTimeFormatter.ISO_LOCAL_DATE));
         lblPositionTitle.setText(emp.getPosition().getTitle());
+        lblTenure.setText(ChronoUnit.YEARS.between(emp.getHireDate(), LocalDate.now())
+        + " Years and " + ChronoUnit.MONTHS.between(emp.getHireDate(), LocalDate.now()) % 12 + " Months");
     }
 
     private void populateSalary(Record rec) {

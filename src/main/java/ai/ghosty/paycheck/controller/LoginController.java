@@ -1,6 +1,7 @@
 package ai.ghosty.paycheck.controller;
 
 import ai.ghosty.paycheck.authentication.QuickLogin;
+import ai.ghosty.paycheck.model.Role;
 import ai.ghosty.paycheck.model.User;
 import ai.ghosty.paycheck.service.EmployeeServices;
 import ai.ghosty.paycheck.service.RecordsServices;
@@ -142,7 +143,7 @@ public class LoginController extends Controller {
 
     private void openNextView(User usr) {
         switch (usr.getRole()) {
-            case "admin": {
+            case Role.ADMIN: {
                 try {
                     FXMLLoader loader = new FXMLLoader(getClass().getResource("/app/ui/admin.fxml"));
                     Stage stage = new Stage();
@@ -155,7 +156,7 @@ public class LoginController extends Controller {
                 }
                 break;
             }
-            case "user": {
+            case Role.USER: {
                 try {
                     FXMLLoader loader = new FXMLLoader(getClass().getResource("/app/ui/details.fxml"));
                     Stage stage = new Stage();

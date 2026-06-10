@@ -18,11 +18,14 @@ public class FieldValidation {
             }
 
             if (op == 2 || op == 3) {
+                if (f.getText().isEmpty()) {continue;}
                 try {
                     new BigDecimal(f.getText());
                 }
                 catch (NumberFormatException e) {
-                    updateWarningText((byte) 1, "Please fill out fields correctly", lblWarning);
+                    if (lblWarning != null) {
+                        updateWarningText((byte) 1, "Please fill out fields correctly", lblWarning);
+                    }
                     return false;
                 }
             }

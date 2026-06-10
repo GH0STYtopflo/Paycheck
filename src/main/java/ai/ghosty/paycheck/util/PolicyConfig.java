@@ -6,8 +6,12 @@ import java.io.*;
 import java.math.BigDecimal;
 import java.nio.file.Path;
 
+
+/* I specifically wrote this class instead of using a library just to demonstrate that
+   we're not incapable of handling file io. it's just lame and time-consuming.
+*/
 public class PolicyConfig {
-    private final static Path JSON_FILE = Path.of("../Policy.json");
+    private final static Path JSON_FILE = Path.of("Policy.json");
 
     public static void updatePolicyConf(Policy policy) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(JSON_FILE.toFile()))) {
@@ -43,32 +47,25 @@ public class PolicyConfig {
     }
 
     public static Policy readPolicyConf() {
-        BigDecimal[] values = new BigDecimal[11];
+        BigDecimal[] fields = new BigDecimal[11];
 
         try (BufferedReader reader = new BufferedReader(new FileReader(JSON_FILE.toFile()))) {
             String line, value;
             byte i = 0;
-
             while ((line = reader.readLine()) != null) {
-                if (line.split(":").length == 1) {
-                    values[i] = null;
-                    i++;
-                    continue;
-                }
+                if (!line.contains(":")) continue;
 
-                if (line.contains(":")) {
-                    values[i] = (!line.split(":")[1].trim().isEmpty())
-                            ? new BigDecimal(line.split(":")[1].trim()) : null;
+                value = line.split(":")[1].trim();
+                if (value.contains(",")) value = value.split(",")[0];
 
-                    i++;
-                }
+                fields[i] = new BigDecimal(value);
             }
 
-            return new Policy(values[0], values[1], values[2], values[3],values[4],values[5],values[6],
-                    values[7],values[8],values[9],values[10]);
+            return new Policy(fields[0], fields[1], fields[2], fields[3], fields[4],
+                    fields[5], fields[6], fields[7], fields[8], fields[9], fields[10]);
         }
         catch (IOException e) {
-            System.err.println("[error] failed to read policy configuration");
+            System.err.println("[error] failed to read policy configuration returning default policies");
         }
 
         return new Policy();

@@ -1,19 +1,15 @@
 package ai.ghosty.paycheck.controller;
 
-import ai.ghosty.paycheck.model.Employee;
-import ai.ghosty.paycheck.model.Position;
+import ai.ghosty.paycheck.model.*;
 import ai.ghosty.paycheck.model.Record;
-import ai.ghosty.paycheck.model.User;
 import ai.ghosty.paycheck.service.*;
 import ai.ghosty.paycheck.util.Encryption;
 import ai.ghosty.paycheck.util.FieldValidation;
 import ai.ghosty.paycheck.util.PolicyConfig;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -32,7 +28,6 @@ public class AdminController extends Controller {
     public void initialize(Object... args) {
         this.ownstage = (Stage) args[0];
         lblWarning.setVisible(false);
-        this.positions = PositionsServices.getAllPositions();
         setUpPosCombo();
         setUpRadiobuttons();
         populatePositionsTable();
@@ -79,6 +74,7 @@ public class AdminController extends Controller {
 
     private void setUpPosCombo() {
         List<String> titles = new ArrayList<>();
+        this.positions = PositionsServices.getAllPositions();
 
         for (Position position : positions) {
             titles.add(position.getTitle() + "-" + position.getId());
@@ -185,7 +181,7 @@ public class AdminController extends Controller {
 
     private void register() {
         Record rec;
-
+        // TODO check if username exists before creating user
         if (!exists.isSelected()) {
             Employee emp = new Employee(txtfName.getText().trim(), txtfLast.getText().trim(),
                     (radioMale.isSelected()) ? "m" : "f", radioMarried.isSelected(),
@@ -193,12 +189,11 @@ public class AdminController extends Controller {
                     Integer.parseInt(txtfWork.getText().trim()), Integer.parseInt(txtfDeduction.getText().trim()),
                     new BigDecimal(txtfLoan.getText().trim()), rent.isSelected(), datePicker.getValue(),
                     positions.get(comboPositions.getSelectionModel().getSelectedIndex()));
-            User user = new User(txtfUsername.getText().trim(), Encryption.stringToSHA256(txtfPassword.getText().trim()),
-                    "user");
+            User user = new User(emp.getId(), txtfUsername.getText().trim(), Encryption.stringToSHA256(txtfPassword.getText().trim()),
+                    Role.USER);
 
             rec = SalaryCalculator.calculate(emp, PolicyConfig.readPolicyConf());
             EmployeeServices.create(emp);
-            RecordsServices.create(rec);
             UserServices.createUser(user);
         }
         else {
@@ -220,6 +215,7 @@ public class AdminController extends Controller {
     }
 
     // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+    // ||||||||||||||||||||||||||||||||| 2nd tab ||||||||||||||||||||||||||||||||||
     private @FXML TextField txtfNewPosTitle, txtfNewPosIncome;
     private @FXML Label lblWarning1;
     private @FXML Button btnCreatePosition;
@@ -243,6 +239,7 @@ public class AdminController extends Controller {
         FieldValidation.validateFields(new TextField[]{txtfNewPosIncome}, (byte) 3, lblWarning1);
         createPosition();
         populatePositionsTable();
+        setUpPosCombo();
         FieldValidation.updateWarningText((byte) 0, "Position created successfully", lblWarning1);
     }
 
@@ -253,7 +250,52 @@ public class AdminController extends Controller {
         PositionsServices.createPosition(position);
     }
 
+    // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+    // ||||||||||||||||||||||||||||||||| 3rd tab ||||||||||||||||||||||||||||||||||
+    @FXML private TextField txtfIncomeTax, txtfSocialSecurity, txtfHealthcare, txtfInsurance,
+            txtfOvertimeMult, txtfMaxLoanRate, txtfAccomodation, txtfMealAllowance, txtfRecreation,
+            txtfChildAllowance, txtfWomenExtra;
+    @FXML private Button btnResetPolicies, btnSavePolicies;
 
+    @FXML private Label lblPolicyWarning;
+
+    @FXML
+    private void onSave(){
+        //if (!validatePolicyFields()) return;
+        savePolicy();
+    }
+
+    @FXML
+    private void onReset() {
+        PolicyConfig.updatePolicyConf(new Policy());
+        FieldValidation.updateWarningText((byte) 0, "Policy updated successfully", lblPolicyWarning);
+    }
+
+    private boolean validatePolicyFields() {
+        return FieldValidation.validateFields(new TextField[]{txtfIncomeTax,
+                txtfSocialSecurity, txtfHealthcare, txtfInsurance,
+                txtfOvertimeMult, txtfMaxLoanRate, txtfAccomodation,
+                txtfMealAllowance, txtfRecreation, txtfChildAllowance, txtfWomenExtra}, (byte) 2, lblPolicyWarning);
+    }
+
+    private void savePolicy() {
+        Policy policy = new Policy(
+                txtfIncomeTax.getText().isBlank() ? null : new BigDecimal(txtfIncomeTax.getText()),
+                txtfSocialSecurity.getText().isBlank() ? null : new BigDecimal(txtfSocialSecurity.getText()),
+                txtfHealthcare.getText().isBlank() ? null : new BigDecimal(txtfHealthcare.getText()),
+                txtfInsurance.getText().isBlank() ? null : new BigDecimal(txtfInsurance.getText()),
+                txtfOvertimeMult.getText().isBlank() ? null : new BigDecimal(txtfOvertimeMult.getText()),
+                txtfMaxLoanRate.getText().isBlank() ? null : new BigDecimal(txtfMaxLoanRate.getText()),
+                txtfAccomodation.getText().isBlank() ? null : new BigDecimal(txtfAccomodation.getText()),
+                txtfMealAllowance.getText().isBlank() ? null : new BigDecimal(txtfMealAllowance.getText()),
+                txtfRecreation.getText().isBlank() ? null : new BigDecimal(txtfRecreation.getText()),
+                txtfChildAllowance.getText().isBlank() ? null : new BigDecimal(txtfChildAllowance.getText()),
+                txtfWomenExtra.getText().isBlank() ? null : new BigDecimal(txtfWomenExtra.getText())
+        );
+
+        FieldValidation.updateWarningText((byte) 0, "Policy saved successfully", lblPolicyWarning);
+        PolicyConfig.updatePolicyConf(policy);
+    }
 
 
 

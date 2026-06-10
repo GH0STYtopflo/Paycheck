@@ -10,7 +10,7 @@ public class Position {
     private BigDecimal salaryPerHour;
 
     public Position(String title, BigDecimal salaryPerHour) {
-        this.id = IDGen.generateUniqueID();
+        this.id = IDGen.generateUniqueID(Tables.POSITIONS);
         this.title = title;
         this.salaryPerHour = salaryPerHour;
     }

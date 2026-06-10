@@ -471,17 +471,30 @@
                                           </VBox>
                                        </children>
                                     </GridPane>
-                                    <Button fx:id="btnSavePolicies" mnemonicParsing="false" prefHeight="45.0" prefWidth="250.0" styleClass="action-btn" text="Save Policies">
-                                       <font>
-                                          <Font name="System Bold" size="16.0" />
-                                       </font>
-                                       <cursor>
-                                          <Cursor fx:constant="HAND" />
-                                       </cursor>
-                                       <VBox.margin>
-                                          <Insets top="15.0" />
-                                       </VBox.margin>
-                                    </Button>
+                                    <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="5.0">
+                                       <children>
+                                          <Button fx:id="btnSavePolicies" mnemonicParsing="false" onAction="#onSave" prefHeight="45.0" prefWidth="250.0" styleClass="action-btn" text="Save Policies">
+                                             <font>
+                                                <Font name="System Bold" size="16.0" />
+                                             </font>
+                                             <cursor>
+                                                <Cursor fx:constant="HAND" />
+                                             </cursor>
+                                          </Button>
+                                          <Button fx:id="btnResetPolicies" layoutX="10.0" layoutY="38.0" mnemonicParsing="false" onAction="#onReset" prefHeight="45.0" prefWidth="45.0" styleClass="reset-button">
+                                             <font>
+                                                <Font name="System Bold" size="16.0" />
+                                             </font>
+                                             <cursor>
+                                                <Cursor fx:constant="HAND" />
+                                             </cursor>
+                                             <graphic>
+                                                <SVGPath content="M12 10q-0.825 0-1.413-0.588T10 8q0-0.825 0.588-1.413T12 6q0.825 0 1.413 0.588T14 8q0 0.825-0.588 1.413T12 10Zm0 7q-3.475 0-6.025-2.288T3.05 9h2.05q0.35 2.6 2.313 4.3T12 15q2.925 0 4.963-2.038T19 8q0-2.925-2.038-4.963T12 1q-1.725 0-3.225 0.8T6.25 4h2.75v2H3V0h2v2.35Q7.275 0.75 9.113 0.125T12 -1q1.875 0 3.513 0.713t2.85 1.925q1.213 1.213 1.925 2.85T21 8q0 1.875-0.713 3.513t-1.925 2.85q-1.213 1.213-2.85 1.925T12 17Z" fill="WHITE" />
+                                             </graphic>
+                                          </Button>
+                                          <Label fx:id="lblPolicyWarning" text="Label" visible="false" />
+                                       </children>
+                                    </HBox>
                                  </children>
                               </VBox>
                            </children>
