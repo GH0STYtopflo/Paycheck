@@ -6,6 +6,7 @@ import ai.ghosty.paycheck.model.User;
 import ai.ghosty.paycheck.service.EmployeeServices;
 import ai.ghosty.paycheck.service.RecordsServices;
 import ai.ghosty.paycheck.service.UserServices;
+import ai.ghosty.paycheck.util.FieldValidation;
 import javafx.animation.ScaleTransition;
 import javafx.animation.TranslateTransition;
 import javafx.fxml.FXML;
@@ -28,25 +29,20 @@ import static ai.ghosty.paycheck.util.Encryption.stringToSHA256;
 public class LoginController extends Controller {
     @FXML private TextField txtfUsername;
     @FXML private PasswordField txtfPassword;
-    @FXML private Button btnLogin, btnClose, btnMinimize, btnConfirm;
+    @FXML private Button btnLogin, btnClose, btnMinimize, btnSendCode;
     @FXML private Label lblPhrase, lblMethod, lblWarning;
-    @FXML private HBox buttons, phraseBox;
+    @FXML private HBox buttons;
 
-    private String loginMethod = "pass", code;
+    private String code;
+    private boolean passLogin;
 
     // ATTENTION! arguments order: 1. Own stage !ATTENTION
     @Override
     public void initialize(Object... args) {
         this.ownstage = (Stage) args[0];
-        animationSetup();
+        passLogin = true;
+        setMovable();
         show();
-    }
-
-    private void animationSetup() {
-        btnLogin.setOnMouseEntered(event -> {scaleUp(btnLogin);});
-        btnLogin.setOnMouseExited(event -> {scaleDown(btnLogin);});
-        btnConfirm.setOnMouseEntered(event -> {scaleUp(btnConfirm);});
-        btnConfirm.setOnMouseExited(event -> {scaleDown(btnConfirm);});
     }
 
 
@@ -54,8 +50,6 @@ public class LoginController extends Controller {
         ownstage.setResizable(false);
         ownstage.initStyle(StageStyle.TRANSPARENT);
         ownstage.setTitle("Login");
-        setMovable();
-        buttons.getChildren().remove(btnConfirm);
         ownstage.show();
     }
 
@@ -75,70 +69,45 @@ public class LoginController extends Controller {
 
     @FXML
     private void onSendCode() {
-        if (!checkRequiredFields() && userExists() == null) return;
+        if (FieldValidation.validateFields(new TextField[]{txtfUsername} ,(byte) 0, lblWarning)
+                && !UserServices.usernameExists(txtfUsername.getText().trim())) return;
         code = QuickLogin.generateCode();
     }
 
     private void switchLoginMethod() {
-        if (loginMethod.equals("pass")) {
-            loginMethod = "code";
-            buttons.getChildren().add(btnConfirm);
-            translate(btnConfirm);
-            lblPhrase.setText("Code");
-            lblMethod.setText("Use Password");
-            btnConfirm.setVisible(true);
-            HBox.setMargin(lblPhrase, new Insets(0, 32, 0, 0));
+        lblMethod.setText(passLogin ? "Login With Password" : "Quick Login");
+        lblPhrase.setText(passLogin ? "OTA Code" : "Password");
+        btnSendCode.setDisable(!btnSendCode.isDisabled());
 
-        }
-        else {
-            loginMethod = "pass";
-            lblPhrase.setText("Password");
-            lblMethod.setText("Quick Login");
-            buttons.getChildren().remove(btnConfirm);
-            HBox.setMargin(lblPhrase, new Insets(0, 0, 0, 0));
-        }
+
+        passLogin = !passLogin;
     }
 
     private void login() {
-        User usr = userExists();
-        if (usr == null) return;
-        if (loginMethod.equals("pass")) {
-            if (isAuthenticated(txtfPassword.getText(), usr.getPasswordHash())) {
-                lblWarning.setTextFill(Color.GREEN);
-                lblWarning.setText("Login successful");
-                lblWarning.setVisible(true);
-                openNextView(usr);
-            }
-            else {
-                lblWarning.setText("Invalid username or password");
-                lblWarning.setTextFill(Color.RED);
-                lblWarning.setVisible(true);
-            }
-        }
-        else if (loginMethod.equals("code")) {
-            if (isAuthenticated(txtfPassword.getText())) {
-                lblWarning.setTextFill(Color.GREEN);
-                lblWarning.setText("Login successful");
-                lblWarning.setVisible(true);
-                openNextView(usr);
-            }
-            else {
-                lblWarning.setText("Please provide the code correctly");
-                lblWarning.setTextFill(Color.RED);
-                lblWarning.setVisible(true);
-            }
-        }
-    }
-
-    private User userExists() {
-        User usr = UserServices.getUserByUsername(txtfUsername.getText());
+        User usr = UserServices.getUserByUsername(txtfUsername.getText().trim());
         if (usr == null) {
-            lblWarning.setTextFill(Color.RED);
-            lblWarning.setText("User doesn't exist");
-            lblWarning.setVisible(true);
+            FieldValidation.updateWarningText((byte) 1, "Username Doesn't Exist", lblWarning);
+            return;
         }
 
-        return usr;
+        if (passLogin) {
+            if (isAuthenticated(txtfPassword.getText(), usr.getPasswordHash())) {
+                FieldValidation.updateWarningText((byte) 0, "Login Successful", lblWarning);
+                openNextView(usr);
+            }
+            else {
+                FieldValidation.updateWarningText((byte) 1, "Invalid username or password", lblWarning);
+            }
+        }
+        else {
+            if (isAuthenticated(txtfPassword.getText())) {
+                FieldValidation.updateWarningText((byte) 0, "Login Successful", lblWarning);
+                openNextView(usr);
+            }
+            else {
+                FieldValidation.updateWarningText((byte) 1, "Invalid OTA Code", lblWarning);
+            }
+        }
     }
 
     private void openNextView(User usr) {
@@ -176,48 +145,5 @@ public class LoginController extends Controller {
     }
     private boolean isAuthenticated(String code) {
         return code.equals(this.code);
-    }
-
-
-    private boolean checkRequiredFields() {
-        if (loginMethod.equals("code")) {
-            if (txtfUsername.getText().isEmpty()) {
-                lblWarning.setText("Please fill all the fields");
-                lblWarning.setVisible(true);
-                return false;
-            }
-            else return true;
-        }
-        if (txtfUsername.getText().trim().isEmpty() || txtfPassword.getText().trim().isEmpty()) {
-            lblWarning.setText("Please fill all the fields");
-            lblWarning.setVisible(true);
-            return false;
-        }
-
-        return true;
-    }
-
-
-
-    // animation stuff
-    private void scaleUp(Button btn) {
-        ScaleTransition st = new ScaleTransition(Duration.millis(100), btn);
-        st.setToX(1.02);
-        st.setToY(1.02);
-        st.play();
-    }
-
-    private void scaleDown(Button btn) {
-        ScaleTransition st = new ScaleTransition(Duration.millis(300), btn);
-        st.setToX(1.0);
-        st.setToY(1.0);
-        st.play();
-    }
-
-    private void translate(Button btn) {
-        TranslateTransition tt = new TranslateTransition(Duration.millis(100), btn);
-        tt.setFromX(-50);
-        tt.setToX(0);
-        tt.play();
     }
 }

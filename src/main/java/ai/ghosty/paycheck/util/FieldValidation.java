@@ -7,7 +7,12 @@ import javafx.scene.paint.Color;
 import java.math.BigDecimal;
 
 public class FieldValidation {
-    // op codes: 1 = check empty 2 = check numeric 3 = check both
+    /** op codes: 1 = check empty 2 = check numeric 3 = check both
+     * @param fields
+     * @param op
+     * @param lblWarning
+     * @return
+     */
     public static boolean validateFields(TextField[] fields, byte op, Label lblWarning) {
         for (TextField f : fields) {
             if (op == 1 || op == 3) {
@@ -34,7 +39,11 @@ public class FieldValidation {
         return true;
     }
 
-    // op code: 0 = success 1 = fail
+    /** op code: 0 = success 1 = fail
+     * @param op
+     * @param message
+     * @param lblWarning
+     */
     public static void updateWarningText(byte op, String message, Label lblWarning) {
         lblWarning.setText(message);
         lblWarning.setTextFill(op == 1 ? Color.RED : Color.GREEN);
