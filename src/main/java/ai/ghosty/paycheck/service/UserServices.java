@@ -78,4 +78,18 @@ public class UserServices {
 
         return false;
     }
+
+    public static void deleteUser(int id) {
+        try (Connection conn = DBConnect.getConnection()){
+            String sql = "DELETE FROM users WHERE user_id = ?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, id);
+
+            ps.executeUpdate();
+            System.err.println("[info] deleted user successfully");
+        }
+        catch (SQLException e) {
+            System.err.println("[error] failed to delete user: " + e.getMessage());
+        }
+    }
 }

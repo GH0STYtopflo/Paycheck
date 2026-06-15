@@ -4,9 +4,11 @@ import ai.ghosty.paycheck.model.*;
 import ai.ghosty.paycheck.model.Record;
 import ai.ghosty.paycheck.service.*;
 import ai.ghosty.paycheck.util.Encryption;
-import ai.ghosty.paycheck.util.FieldValidation;
 import ai.ghosty.paycheck.util.PolicyConfig;
+import ai.ghosty.paycheck.validation.*;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -31,6 +33,7 @@ public class AdminController extends Controller {
         setUpPosCombo();
         setUpRadiobuttons();
         populatePositionsTable();
+        populateEmpTable();
         show();
     }
 
@@ -102,27 +105,35 @@ public class AdminController extends Controller {
 
     @FXML
     private void OnUpdate() {
-        if (comboPositions.getSelectionModel().getSelectedIndex() == -1) {
-            FieldValidation.updateWarningText((byte) 1, "Please select a position", lblWarning);
-            return;
-        }
-
-        if (!exists.isSelected()) {
-            if (!FieldValidation.validateFields(new TextField[]{txtfName, txtfLast}, (byte) 1, lblWarning)) return;
-            if (!FieldValidation.validateFields(new TextField[]{txtfChildren, txtfOT,
-                    txtfDeduction , txtfWork, txtfLoan}, (byte) 3, lblWarning)) return;
-
-            if (!checkRadioButtons((byte) 3)) return;
-            if (!validateCredentials()) return;
-        }
-        else {
-            if (!FieldValidation.validateFields(new TextField[]{txtfID, txtfChildren, txtfOT,
-                    txtfDeduction , txtfWork, txtfLoan}, (byte) 3, lblWarning)) return;
-
-            if (!checkRadioButtons((byte) 2)) return;
-        }
-
+        if (!validateFields()) return;
         register();
+    }
+    
+    private boolean validateFields() {
+        if (comboPositions.getSelectionModel().getSelectedIndex() == -1) {
+            WarningUpdater.updateWarningText((byte) 1, "Please select a position", lblWarning);
+            return false;
+        }
+
+        ValidationResult res;
+        if (!exists.isSelected()) {
+            if (!(res = Validator.validate(new TextField[]{txtfName, txtfLast, txtfUsername, txtfPassword},
+                    Rule.NOT_BLANK)).isValid()) {
+                WarningUpdater.updateWarningText((byte) 1, res.getError(), lblWarning);
+                return false;
+            }
+
+            return checkRadioButtons((byte) 2);
+        }
+
+        if (!(res = Validator.validate(new TextField[]{txtfChildren, txtfOT,
+                        txtfDeduction , txtfWork, txtfLoan},
+                Rule.NOT_BLANK)).isValid()) {
+            WarningUpdater.updateWarningText((byte) 1, res.getError(), lblWarning);
+            return false;
+        }
+
+        return checkRadioButtons((byte) 3);
     }
 
     // op codes: 1 = marital 2 = gender 3 = all
@@ -134,7 +145,7 @@ public class AdminController extends Controller {
             }
 
             if (!radioSelected) {
-                FieldValidation.updateWarningText((byte) 1, "Please select a gender", lblWarning);
+                WarningUpdater.updateWarningText((byte) 1, "Please select a gender", lblWarning);
                 return false;
             }
         }
@@ -146,7 +157,7 @@ public class AdminController extends Controller {
             }
 
             if (!radioSelected) {
-                FieldValidation.updateWarningText((byte) 1, "Please select a marital status", lblWarning);
+                WarningUpdater.updateWarningText((byte) 1, "Please select a marital status", lblWarning);
                 return false;
             }
         }
@@ -154,35 +165,11 @@ public class AdminController extends Controller {
         return true;
     }
 
-    private boolean validateCredentials() {
-        if (txtfUsername.getText().isEmpty() || txtfPassword.getText().isEmpty()) {
-            FieldValidation.updateWarningText((byte) 1, "Username can't be empty", lblWarning);
-            return false;
-        }
-
-        if (txtfUsername.getText().length() < 4) {
-            FieldValidation.updateWarningText((byte) 1, "Username must be longer than 4 characters", lblWarning);
-            return false;
-        }
-
-        if (txtfUsername.getText().contains(" ")) {
-            FieldValidation.updateWarningText((byte) 1, "Username cannot contain spaces", lblWarning);
-            return false;
-        }
-
-        if (txtfPassword.getText().length() < 6) {
-            FieldValidation.updateWarningText((byte) 1, "Password must be longer than 6 characters", lblWarning);
-            return false;
-        }
-
-
-        return true;
-    }
-
     private void register() {
         Record rec;
-        // TODO check if username exists before creating user
         if (!exists.isSelected()) {
+            if (UserServices.usernameExists(txtfUsername.getText())) return;
+
             Employee emp = new Employee(txtfName.getText().trim(), txtfLast.getText().trim(),
                     (radioMale.isSelected()) ? "m" : "f", radioMarried.isSelected(),
                     Integer.parseInt(txtfOT.getText().trim()), Integer.parseInt(txtfChildren.getText().trim()),
@@ -207,11 +194,11 @@ public class AdminController extends Controller {
             emp.setDeductionHours(Integer.parseInt(txtfDeduction.getText().trim()));
 
             rec = SalaryCalculator.calculate(emp, PolicyConfig.readPolicyConf());
-            EmployeeServices.updateUserState(emp);
+            EmployeeServices.updateEmpState(emp);
         }
 
         RecordsServices.create(rec);
-        FieldValidation.updateWarningText((byte) 0, "Paycheck record created successfully", lblWarning);
+        WarningUpdater.updateWarningText((byte) 0, "Paycheck record created successfully", lblWarning);
     }
 
     // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
@@ -235,12 +222,19 @@ public class AdminController extends Controller {
 
     @FXML
     private void onCreatePositon() {
-        FieldValidation.validateFields(new TextField[]{txtfNewPosTitle}, (byte) 1, lblWarning1);
-        FieldValidation.validateFields(new TextField[]{txtfNewPosIncome}, (byte) 3, lblWarning1);
+        ValidationResult res;
+
+        if (!(res = Validator.validate(txtfNewPosTitle, Rule.NOT_BLANK)).isValid()) {
+            WarningUpdater.updateWarningText((byte) 1, "Please enter a title", lblWarning);
+        }
+
+        if (!(res = Validator.validate(txtfNewPosIncome, Rule.NOT_BLANK, Rule.NUMERIC, Rule.POSITIVE)).isValid()) {
+            WarningUpdater.updateWarningText((byte) 1, "invalid Income value", lblWarning);
+        }
         createPosition();
         populatePositionsTable();
         setUpPosCombo();
-        FieldValidation.updateWarningText((byte) 0, "Position created successfully", lblWarning1);
+        WarningUpdater.updateWarningText((byte) 0, "Position created successfully", lblWarning1);
     }
 
     private void createPosition() {
@@ -261,21 +255,30 @@ public class AdminController extends Controller {
 
     @FXML
     private void onSave(){
-        //if (!validatePolicyFields()) return;
+        if (!validatePolicyFields()) return;
         savePolicy();
     }
 
     @FXML
     private void onReset() {
         PolicyConfig.updatePolicyConf(new Policy());
-        FieldValidation.updateWarningText((byte) 0, "Policy updated successfully", lblPolicyWarning);
+        WarningUpdater.updateWarningText((byte) 0, "Policy updated successfully", lblPolicyWarning);
     }
 
     private boolean validatePolicyFields() {
-        return FieldValidation.validateFields(new TextField[]{txtfIncomeTax,
+        ValidationResult res;
+
+        if (!(res = Validator.validate(new TextField[]{txtfIncomeTax,
                 txtfSocialSecurity, txtfHealthcare, txtfInsurance,
                 txtfOvertimeMult, txtfMaxLoanRate, txtfAccomodation,
-                txtfMealAllowance, txtfRecreation, txtfChildAllowance, txtfWomenExtra}, (byte) 2, lblPolicyWarning);
+                txtfMealAllowance, txtfRecreation, txtfChildAllowance, txtfWomenExtra},
+                Rule.NUMERIC, Rule.POSITIVE)).isValid()) {
+            WarningUpdater.updateWarningText((byte) 1, res.getError(), lblWarning);
+
+            return false;
+        }
+
+        return true;
     }
 
     private void savePolicy() {
@@ -293,10 +296,40 @@ public class AdminController extends Controller {
                 txtfWomenExtra.getText().isBlank() ? null : new BigDecimal(txtfWomenExtra.getText())
         );
 
-        FieldValidation.updateWarningText((byte) 0, "Policy saved successfully", lblPolicyWarning);
+        WarningUpdater.updateWarningText((byte) 0, "Policy saved successfully", lblPolicyWarning);
         PolicyConfig.updatePolicyConf(policy);
     }
 
+
+    // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+    // ||||||||||||||||||||||||||||||||| 4rd tab ||||||||||||||||||||||||||||||||||
+    @FXML private TableView tableEmployees;
+    @FXML private TableColumn<Employee, Integer> colEmpId;
+    @FXML private TableColumn<Employee, String> colEmpName;
+    @FXML private TableColumn<Employee, String> colEmpLastName;
+    @FXML private TableColumn<Employee, String> colEmpPosition;
+
+    private void populateEmpTable() {
+        ObservableList<Employee> empList = FXCollections.observableArrayList(EmployeeServices.getAllEmployees());
+
+        colEmpId.setCellValueFactory(new PropertyValueFactory<>("id"));
+        colEmpName.setCellValueFactory(new PropertyValueFactory<>("name"));
+        colEmpLastName.setCellValueFactory(new PropertyValueFactory<>("lastName"));
+        colEmpPosition.setCellValueFactory(cellData -> {
+            Employee employee = cellData.getValue();
+            return new SimpleStringProperty(employee.getPosition().getTitle());
+        });
+
+        tableEmployees.setItems(empList);
+    }
+
+    @FXML
+    private void onDelete() {deleteEmp();}
+
+    private void deleteEmp() {
+        EmployeeServices.deleteEmployee(((Employee) tableEmployees.getSelectionModel().getSelectedItem()).getId());
+        populateEmpTable();
+    }
 
 
 }

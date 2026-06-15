@@ -82,4 +82,17 @@ public class RecordsServices {
         }
         return null;
     }
+
+    public static void deleteEmpRecords(int id) {
+        try (Connection conn = DBConnect.getConnection()) {
+            String sql = "DELETE FROM records WHERE rec_id = ?";
+
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, id);
+            ps.executeUpdate();
+        }
+        catch (SQLException e) {
+            System.err.println("[warning] failed to delete records: " +  e.getMessage());
+        }
+    }
 }

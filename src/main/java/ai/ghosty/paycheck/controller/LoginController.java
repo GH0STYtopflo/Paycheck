@@ -6,22 +6,16 @@ import ai.ghosty.paycheck.model.User;
 import ai.ghosty.paycheck.service.EmployeeServices;
 import ai.ghosty.paycheck.service.RecordsServices;
 import ai.ghosty.paycheck.service.UserServices;
-import ai.ghosty.paycheck.util.FieldValidation;
-import javafx.animation.ScaleTransition;
-import javafx.animation.TranslateTransition;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import javafx.util.Duration;
 import java.io.IOException;
 import static ai.ghosty.paycheck.util.Encryption.stringToSHA256;
 
@@ -69,8 +63,10 @@ public class LoginController extends Controller {
 
     @FXML
     private void onSendCode() {
-        if (FieldValidation.validateFields(new TextField[]{txtfUsername} ,(byte) 0, lblWarning)
-                && !UserServices.usernameExists(txtfUsername.getText().trim())) return;
+        if (txtfUsername.getText().isBlank()) {
+            WarningUpdater.updateWarningText((byte) 1, "Please enter a username", lblWarning);
+            return;
+        }
         code = QuickLogin.generateCode();
     }
 
@@ -86,26 +82,26 @@ public class LoginController extends Controller {
     private void login() {
         User usr = UserServices.getUserByUsername(txtfUsername.getText().trim());
         if (usr == null) {
-            FieldValidation.updateWarningText((byte) 1, "Username Doesn't Exist", lblWarning);
+            WarningUpdater.updateWarningText((byte) 1, "User doesn't exist", lblWarning);
             return;
         }
 
         if (passLogin) {
             if (isAuthenticated(txtfPassword.getText(), usr.getPasswordHash())) {
-                FieldValidation.updateWarningText((byte) 0, "Login Successful", lblWarning);
+                WarningUpdater.updateWarningText((byte) 0, "Login Successful", lblWarning);
                 openNextView(usr);
             }
             else {
-                FieldValidation.updateWarningText((byte) 1, "Invalid username or password", lblWarning);
+                WarningUpdater.updateWarningText((byte) 1, "Invalid username or password", lblWarning);
             }
         }
         else {
             if (isAuthenticated(txtfPassword.getText())) {
-                FieldValidation.updateWarningText((byte) 0, "Login Successful", lblWarning);
+                WarningUpdater.updateWarningText((byte) 0, "Login Successful", lblWarning);
                 openNextView(usr);
             }
             else {
-                FieldValidation.updateWarningText((byte) 1, "Invalid OTA Code", lblWarning);
+                WarningUpdater.updateWarningText((byte) 1, "Invalid OTA Code", lblWarning);
             }
         }
     }

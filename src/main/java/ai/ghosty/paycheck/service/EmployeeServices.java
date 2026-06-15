@@ -10,6 +10,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.List;
 
 public class EmployeeServices {
     public static int create(Employee emp) {
@@ -74,7 +78,37 @@ public class EmployeeServices {
         return null;
     }
 
-    public static void updateUserState(Employee emp) {
+    public static List<Employee> getAllEmployees() {
+        List<Employee> employees = new ArrayList<>();
+        String sql = "SELECT * FROM employees";
+        try (Connection conn = DBConnect.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                int id = rs.getInt("emp_id");
+                String name = rs.getString("name");
+                String lastName = rs.getString("last_name");
+                String gender = rs.getString("gender");
+                boolean isMarried = (rs.getInt("marital_status") == 1);
+                int overtime = rs.getInt("overtime");
+                int children = rs.getInt("children");
+                int workHours = rs.getInt("work_hours");
+                int deductionHours = rs.getInt("deduction_hours");
+                BigDecimal loan = rs.getBigDecimal("loan");
+                LocalDate date = LocalDate.parse(rs.getString("date"));
+                boolean rent = rs.getInt("rent") == 1;
+                int pos_id = rs.getInt("pos_id");
+                Position pos = PositionsServices.getPositionById(pos_id);
+
+                employees.add(new Employee(id, name, lastName, gender, isMarried, overtime, children, workHours, deductionHours, loan, rent, date, pos));
+            }
+        } catch (SQLException e) {
+            System.err.println("[error] failed to fetch employees: " + e.getMessage());
+        }
+        return employees;
+    }
+
+    public static void updateEmpState(Employee emp) {
         String sql = "UPDATE employees SET children = ?, rent = ?, marital_status = ?,work_hours = ?, overtime = ?, deduction_hours = ?," +
                 " loan = ?, pos_id = ?, WHERE emp_id = ?";
 
@@ -95,5 +129,22 @@ public class EmployeeServices {
         catch (SQLException e) {
             System.err.println("[error] failed to update employee status: " + e.getMessage());
         }
+    }
+
+    public static void deleteEmployee(int id) {
+        try (Connection conn = DBConnect.getConnection()) {
+            String sql = "DELETE FROM employees WHERE emp_id = ?";
+
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, id);
+            ps.executeUpdate();
+            System.err.println("[info] deleted user successfully");
+        }
+        catch (SQLException e) {
+            System.err.println("[error] failed to delete employee: " + e.getMessage());
+        }
+
+        UserServices.deleteUser(id);
+        RecordsServices.deleteEmpRecords(id);
     }
 }

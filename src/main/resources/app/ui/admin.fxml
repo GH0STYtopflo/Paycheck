@@ -277,6 +277,43 @@
                </content>
             </Tab>
 
+            <Tab text="Employees">
+               <content>
+                  <ScrollPane fitToWidth="true" pannable="true" styleClass="edge-to-edge">
+                     <content>
+                        <VBox alignment="TOP_CENTER" spacing="25.0">
+                           <padding>
+                              <Insets bottom="40.0" left="40.0" right="40.0" top="25.0" />
+                           </padding>
+                           <children>
+                              <VBox spacing="20.0" styleClass="card" VBox.vgrow="ALWAYS">
+                                 <padding>
+                                    <Insets bottom="30.0" left="30.0" right="30.0" top="25.0" />
+                                 </padding>
+                                 <children>
+                                    <Label styleClass="header-label" text="All Employees" />
+                                    <Separator prefWidth="200.0" />
+                                    <TableView fx:id="tableEmployees" prefHeight="450.0" prefWidth="200.0" styleClass="custom-table">
+                                       <columns>
+                                          <TableColumn fx:id="colEmpId" prefWidth="150.0" text="ID" />
+                                          <TableColumn fx:id="colEmpName" prefWidth="250.0" text="Name" />
+                                          <TableColumn fx:id="colEmpLastName" prefWidth="250.0" text="Last Name" />
+                                          <TableColumn fx:id="colEmpPosition" prefWidth="250.0" text="Position" />
+                                       </columns>
+                                       <columnResizePolicy>
+                                          <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                                       </columnResizePolicy>
+                                    </TableView>
+                                    <Button fx:id="btnDeleteEmp" mnemonicParsing="false" onAction="#onDelete" prefHeight="48.0" prefWidth="250.0" styleClass="action-btn" text="Delete Employee" />
+                                 </children>
+                              </VBox>
+                           </children>
+                        </VBox>
+                     </content>
+                  </ScrollPane>
+               </content>
+            </Tab>
+
             <Tab text="Position Management">
                <content>
                   <ScrollPane fitToWidth="true" pannable="true" styleClass="edge-to-edge">

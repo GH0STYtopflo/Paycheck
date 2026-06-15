@@ -91,6 +91,7 @@
 .action-btn {
     -fx-background-color: #10b981;
     -fx-text-fill: #ffffff;
+    -fx-font-size: 15px;
     -fx-font-weight: bold;
     -fx-background-radius: 8px;
     -fx-padding: 12px 24px;
