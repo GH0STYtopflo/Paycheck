@@ -120,7 +120,8 @@ mvn javafx:run
 
 # Or build the uber JAR and run it
 mvn clean package
-java -jar target/UberJarCrossPlatform.jar
+mv target/UberJarCrossPlatform.jar ../
+java -jar UberJarCrossPlatform.jar
 ```
 
 The SQLite database (`db/ghst.db`) is created automatically on the first launch.
