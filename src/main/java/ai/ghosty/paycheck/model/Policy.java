@@ -2,7 +2,6 @@ package ai.ghosty.paycheck.model;
 
 import java.math.BigDecimal;
 import java.util.Objects;
-import java.util.function.Supplier;
 
 public class Policy {
     private BigDecimal INCOME_TAX_RATE, SOCIAL_SECURITY_RATE, 
