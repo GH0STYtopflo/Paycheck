@@ -112,7 +112,7 @@ src/main/resources/app/ui/
 
 ```bash
 # Clone the repository
-git clone <repo-url>
+git clone https://github.com/GH0STYtopflo/Paycheck
 cd Paycheck
 
 # Run with Maven JavaFX plugin
@@ -133,7 +133,6 @@ The SQLite database (`db/ghst.db`) is created automatically on the first launch.
 | Username | `GHOSTY` |
 | Password | `ghostywontmiss` |
 
-> **Note:** Change the default admin password after first login in a production environment.
 
 ## Database Schema
 
