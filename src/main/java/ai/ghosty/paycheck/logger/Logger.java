@@ -11,22 +11,15 @@ import java.time.format.DateTimeFormatter;
 /*نیازی به گرفتن زمان نیست از زمان سیستم من استفاده میکنم 
  */
 public class Logger {
-
-
-    private final String filePath;
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-    private static final String DEFAULT_LOG_FILE_PATH = "../app.log";
+    private static final String LOG_FILE = "app.log";
 
-    public Logger() {this.filePath = DEFAULT_LOG_FILE_PATH;}
-    public Logger(String filePath) {
-        this.filePath = filePath;
-    }
 
-    public void log(String message, LogLevel level) {
+    public static void log(String message, LogLevel level) {
         String timestamp = LocalDateTime.now().format(DATE_FORMATTER);
         String logEntry = String.format("[%s] [%s] %s", timestamp, level, message);
 
-        File file = new File(filePath);
+        File file = new File(LOG_FILE);
 
         //اگر فایل وجود نداشت اونو میسازه 
         if (file.getParentFile() != null) 

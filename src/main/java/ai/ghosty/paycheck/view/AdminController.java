@@ -1,4 +1,4 @@
-package ai.ghosty.paycheck.controller;
+package ai.ghosty.paycheck.view;
 
 import ai.ghosty.paycheck.model.*;
 import ai.ghosty.paycheck.model.Record;
@@ -16,6 +16,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,13 +32,34 @@ public class AdminController extends Controller {
         this.ownstage = (Stage) args[0];
         lblWarning.setVisible(false);
         setUpPosCombo();
+        datePicker.setDayCellFactory(dp -> new DateCell() {
+            @Override
+            public void updateItem(LocalDate item, boolean empty) {
+                super.updateItem(item, empty);
+
+                if (empty || item == null) {
+                    return;
+                }
+
+                setDisable(item.isAfter(LocalDate.now()));
+            }
+        });
         setUpRadiobuttons();
         populatePositionsTable();
         populateEmpTable();
+        setUpPolicyFields();
         show();
     }
 
-    // ||||||||||||||||||||||||||||||||| 1st tab ||||||||||||||||||||||||||||||||||
+    private void show() {
+        ownstage.setResizable(false);
+        ownstage.initStyle(StageStyle.TRANSPARENT);
+        ownstage.setTitle("Admin Dashboard");
+        setMovable();
+        ownstage.show();
+    }
+
+    // ||||||||||||||||||||||||||||||||| add tab ||||||||||||||||||||||||||||||||||
     @FXML private TextField txtfName, txtfLast, txtfChildren, txtfWork, txtfOT,
             txtfLoan, txtfDeduction, txtfUsername;
     @FXML private PasswordField txtfPassword;
@@ -52,15 +74,6 @@ public class AdminController extends Controller {
 
     private RadioButton[] genderGroup, marriedGroup;
     private List<Position> positions;
-
-
-    private void show() {
-        ownstage.setResizable(false);
-        ownstage.initStyle(StageStyle.TRANSPARENT);
-        ownstage.setTitle("Admin Dashboard");
-        setMovable();
-        ownstage.show();
-    }
 
     private void setUpRadiobuttons() {
         setUpRadioGroups();
@@ -93,10 +106,7 @@ public class AdminController extends Controller {
         txtfUsername.setDisable(!txtfUsername.isDisabled());
         txtfPassword.setDisable(!txtfPassword.isDisabled());
 
-        for (int i = 0; i < 2; i++) {
-            marriedGroup[i].setDisable(!marriedGroup[i].isDisabled());
-            genderGroup[i].setDisable(!genderGroup[i].isDisabled());
-        }
+        for (int i = 0; i < 2; i++) {genderGroup[i].setDisable(!genderGroup[i].isDisabled());}
 
         datePicker.setDisable(!datePicker.isDisable());
         register.setText((exists.isSelected()) ? "New Paycheck" : "Register Employee" );
@@ -123,17 +133,24 @@ public class AdminController extends Controller {
                 return false;
             }
 
-            return checkRadioButtons((byte) 2);
+            if (!checkRadioButtons((byte) 3)) return false;
         }
+        else if (!(res = Validator.validate(txtfID, Rule.NOT_BLANK)).isValid()) {
+            WarningUpdater.updateWarningText((byte) 1, "Please specify an employee", lblWarning);
+            return false;
+        }
+
 
         if (!(res = Validator.validate(new TextField[]{txtfChildren, txtfOT,
                         txtfDeduction , txtfWork, txtfLoan},
-                Rule.NOT_BLANK)).isValid()) {
+                Rule.NOT_BLANK, Rule.NUMERIC, Rule.NON_NEGATIVE)).isValid()) {
             WarningUpdater.updateWarningText((byte) 1, res.getError(), lblWarning);
             return false;
         }
 
-        return checkRadioButtons((byte) 3);
+        if (!checkRadioButtons((byte) 1)) return false;
+
+        return true;
     }
 
     // op codes: 1 = marital 2 = gender 3 = all
@@ -168,7 +185,10 @@ public class AdminController extends Controller {
     private void register() {
         Record rec;
         if (!exists.isSelected()) {
-            if (UserServices.usernameExists(txtfUsername.getText())) return;
+            if (UserServices.usernameExists(txtfUsername.getText().trim())) {
+                WarningUpdater.updateWarningText((byte) 1, "Username already exists", lblWarning);
+                return;
+            }
 
             Employee emp = new Employee(txtfName.getText().trim(), txtfLast.getText().trim(),
                     (radioMale.isSelected()) ? "m" : "f", radioMarried.isSelected(),
@@ -192,19 +212,33 @@ public class AdminController extends Controller {
             emp.setWorkHours(Integer.parseInt(txtfWork.getText().trim()));
             emp.setExtraHours(Integer.parseInt(txtfOT.getText().trim()));
             emp.setDeductionHours(Integer.parseInt(txtfDeduction.getText().trim()));
+            emp.setPosition(positions.get(comboPositions.getSelectionModel().getSelectedIndex()));
 
-            rec = SalaryCalculator.calculate(emp, PolicyConfig.readPolicyConf());
             EmployeeServices.updateEmpState(emp);
+            rec = SalaryCalculator.calculate(emp, PolicyConfig.readPolicyConf());
         }
 
         RecordsServices.create(rec);
         WarningUpdater.updateWarningText((byte) 0, "Paycheck record created successfully", lblWarning);
+        populateEmpTable();
+        resetAddEmp();
+    }
+
+    private void resetAddEmp() {
+        TextField[] textFields = new TextField[]{txtfName, txtfLast, txtfChildren, txtfWork, txtfOT,
+                txtfLoan, txtfDeduction, txtfUsername};
+
+        for (TextField textField : textFields) {textField.clear();}
+        txtfPassword.clear();
+        for (RadioButton radio : genderGroup) {radio.setSelected(false);}
+        for (RadioButton radio : marriedGroup) {radio.setSelected(false);}
+        rent.setSelected(false);
     }
 
     // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-    // ||||||||||||||||||||||||||||||||| 2nd tab ||||||||||||||||||||||||||||||||||
+    // ||||||||||||||||||||||||||||||||| pos tab ||||||||||||||||||||||||||||||||||
     private @FXML TextField txtfNewPosTitle, txtfNewPosIncome;
-    private @FXML Label lblWarning1;
+    private @FXML Label lblPosWarning;
     private @FXML Button btnCreatePosition;
     private @FXML TableView<Position> tablePositions;
     private @FXML TableColumn<Position, String> colPosTitle;
@@ -225,16 +259,18 @@ public class AdminController extends Controller {
         ValidationResult res;
 
         if (!(res = Validator.validate(txtfNewPosTitle, Rule.NOT_BLANK)).isValid()) {
-            WarningUpdater.updateWarningText((byte) 1, "Please enter a title", lblWarning);
+            WarningUpdater.updateWarningText((byte) 1, "Please enter a title", lblPosWarning);
+            return;
         }
 
-        if (!(res = Validator.validate(txtfNewPosIncome, Rule.NOT_BLANK, Rule.NUMERIC, Rule.POSITIVE)).isValid()) {
-            WarningUpdater.updateWarningText((byte) 1, "invalid Income value", lblWarning);
+        if (!(res = Validator.validate(txtfNewPosIncome, Rule.NOT_BLANK, Rule.NUMERIC, Rule.NON_NEGATIVE)).isValid()) {
+            WarningUpdater.updateWarningText((byte) 1, "invalid Income value", lblPosWarning);
+            return;
         }
         createPosition();
         populatePositionsTable();
         setUpPosCombo();
-        WarningUpdater.updateWarningText((byte) 0, "Position created successfully", lblWarning1);
+        WarningUpdater.updateWarningText((byte) 0, "Position created successfully", lblPosWarning);
     }
 
     private void createPosition() {
@@ -242,10 +278,16 @@ public class AdminController extends Controller {
                 new BigDecimal(txtfNewPosIncome.getText().trim()));
 
         PositionsServices.createPosition(position);
+        resetCreatePosition();
+    }
+
+    private void resetCreatePosition() {
+        txtfNewPosTitle.clear();
+        txtfNewPosIncome.clear();
     }
 
     // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-    // ||||||||||||||||||||||||||||||||| 3rd tab ||||||||||||||||||||||||||||||||||
+    // ||||||||||||||||||||||||||||||||| policy tab ||||||||||||||||||||||||||||||||||
     @FXML private TextField txtfIncomeTax, txtfSocialSecurity, txtfHealthcare, txtfInsurance,
             txtfOvertimeMult, txtfMaxLoanRate, txtfAccomodation, txtfMealAllowance, txtfRecreation,
             txtfChildAllowance, txtfWomenExtra;
@@ -262,6 +304,7 @@ public class AdminController extends Controller {
     @FXML
     private void onReset() {
         PolicyConfig.updatePolicyConf(new Policy());
+        resetCreatePolicy();
         WarningUpdater.updateWarningText((byte) 0, "Policy updated successfully", lblPolicyWarning);
     }
 
@@ -272,8 +315,8 @@ public class AdminController extends Controller {
                 txtfSocialSecurity, txtfHealthcare, txtfInsurance,
                 txtfOvertimeMult, txtfMaxLoanRate, txtfAccomodation,
                 txtfMealAllowance, txtfRecreation, txtfChildAllowance, txtfWomenExtra},
-                Rule.NUMERIC, Rule.POSITIVE)).isValid()) {
-            WarningUpdater.updateWarningText((byte) 1, res.getError(), lblWarning);
+                Rule.NUMERIC, Rule.NON_NEGATIVE)).isValid()) {
+            WarningUpdater.updateWarningText((byte) 1, res.getError(), lblPolicyWarning);
 
             return false;
         }
@@ -300,14 +343,45 @@ public class AdminController extends Controller {
         PolicyConfig.updatePolicyConf(policy);
     }
 
+    private void resetCreatePolicy() {
+        Policy defaultPolicy = new Policy();
+        txtfIncomeTax.setText(defaultPolicy.getINCOME_TAX_RATE().toString());
+        txtfSocialSecurity.setText(defaultPolicy.getSOCIAL_SECURITY_RATE().toString());
+        txtfHealthcare.setText(defaultPolicy.getHEALTHCARE_RATE().toString());
+        txtfInsurance.setText(defaultPolicy.getINSURANCE_RATE().toString());
+        txtfOvertimeMult.setText(defaultPolicy.getOVERTIME_MULTIPLIER().toString());
+        txtfMaxLoanRate.setText(defaultPolicy.getMAX_LOAN_REPAY_RATE().toString());
+        txtfAccomodation.setText(defaultPolicy.getACCOMMODATION_FLAT_RATE().toString());
+        txtfMealAllowance.setText(defaultPolicy.getMEAL_ALLOWANCE_FLAT_RATE().toString());
+        txtfRecreation.setText(defaultPolicy.getRECREATION_PER_FAMILY_MEMBER().toString());
+        txtfChildAllowance.setText(defaultPolicy.getCHILD_ALLOWANCE_PER_CHILD().toString());
+        txtfWomenExtra.setText(defaultPolicy.getWOMEN_EXTRA().toString());
+    }
+
+    private void setUpPolicyFields() {
+        Policy defaultPolicy = PolicyConfig.readPolicyConf();
+        txtfIncomeTax.setText(defaultPolicy.getINCOME_TAX_RATE().toString());
+        txtfSocialSecurity.setText(defaultPolicy.getSOCIAL_SECURITY_RATE().toString());
+        txtfHealthcare.setText(defaultPolicy.getHEALTHCARE_RATE().toString());
+        txtfInsurance.setText(defaultPolicy.getINSURANCE_RATE().toString());
+        txtfOvertimeMult.setText(defaultPolicy.getOVERTIME_MULTIPLIER().toString());
+        txtfMaxLoanRate.setText(defaultPolicy.getMAX_LOAN_REPAY_RATE().toString());
+        txtfAccomodation.setText(defaultPolicy.getACCOMMODATION_FLAT_RATE().toString());
+        txtfMealAllowance.setText(defaultPolicy.getMEAL_ALLOWANCE_FLAT_RATE().toString());
+        txtfRecreation.setText(defaultPolicy.getRECREATION_PER_FAMILY_MEMBER().toString());
+        txtfChildAllowance.setText(defaultPolicy.getCHILD_ALLOWANCE_PER_CHILD().toString());
+        txtfWomenExtra.setText(defaultPolicy.getWOMEN_EXTRA().toString());
+    }
+
 
     // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-    // ||||||||||||||||||||||||||||||||| 4rd tab ||||||||||||||||||||||||||||||||||
+    // ||||||||||||||||||||||||||||||||| emp tab ||||||||||||||||||||||||||||||||||
     @FXML private TableView tableEmployees;
     @FXML private TableColumn<Employee, Integer> colEmpId;
     @FXML private TableColumn<Employee, String> colEmpName;
     @FXML private TableColumn<Employee, String> colEmpLastName;
     @FXML private TableColumn<Employee, String> colEmpPosition;
+    @FXML private Label lblEmpDelWarning;
 
     private void populateEmpTable() {
         ObservableList<Employee> empList = FXCollections.observableArrayList(EmployeeServices.getAllEmployees());
@@ -327,8 +401,14 @@ public class AdminController extends Controller {
     private void onDelete() {deleteEmp();}
 
     private void deleteEmp() {
-        EmployeeServices.deleteEmployee(((Employee) tableEmployees.getSelectionModel().getSelectedItem()).getId());
-        populateEmpTable();
+        try {
+            EmployeeServices.deleteEmployee(((Employee) tableEmployees.getSelectionModel().getSelectedItem()).getId());
+            populateEmpTable();
+            WarningUpdater.updateWarningText((byte) 0, "Deleted Employee Successfully", lblEmpDelWarning);
+        }
+        catch (Exception e) {
+            WarningUpdater.updateWarningText((byte) 1, "Failed to delete employee", lblEmpDelWarning);
+        }
     }
 
 

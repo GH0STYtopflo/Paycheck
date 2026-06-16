@@ -1,4 +1,4 @@
-package ai.ghosty.paycheck.controller;
+package ai.ghosty.paycheck.view;
 
 import javafx.fxml.FXML;
 import javafx.scene.layout.HBox;

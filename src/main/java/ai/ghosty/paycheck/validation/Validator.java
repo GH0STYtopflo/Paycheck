@@ -2,6 +2,8 @@ package ai.ghosty.paycheck.validation;
 
 import javafx.scene.control.TextField;
 
+import java.math.BigDecimal;
+
 public class Validator {
 
     //عین علامت ستاره در پایتون هست که به ما اجازه میدهد به تعداد غیر مشخص دستور بگیریم
@@ -29,7 +31,7 @@ public class Validator {
                     }
                     break;
 
-                case POSITIVE:
+                case NON_NEGATIVE:
                     if (!isPositive(value)) {
                         result.addError("Values must be positive");
                     }
@@ -69,9 +71,9 @@ public class Validator {
                         }
                         break;
 
-                    case POSITIVE:
+                    case NON_NEGATIVE:
                         if (!isPositive(value)) {
-                            result.addError("Values must be positive");
+                            result.addError("Values must be non negative");
                             valid = false;
                         }
                         break;
@@ -98,10 +100,10 @@ public class Validator {
         }
     }
 
-    //عدد باید بزرگتر از صفر باشد و عدد هم باشد
+    //عدد باید بزرگتر= از صفر باشد و عدد هم باشد
     private static boolean isPositive(String value) {
         try {
-            return Double.parseDouble(value) > 0;
+            return new BigDecimal(value).compareTo(BigDecimal.ZERO) >= 0;
         } catch (Exception e) {
             return false;
         }

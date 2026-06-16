@@ -1,6 +1,8 @@
 package ai.ghosty.paycheck.service;
 
 import ai.ghosty.paycheck.db.DBConnect;
+import ai.ghosty.paycheck.logger.LogLevel;
+import ai.ghosty.paycheck.logger.Logger;
 import ai.ghosty.paycheck.model.Role;
 import ai.ghosty.paycheck.model.User;
 
@@ -11,7 +13,7 @@ import java.sql.SQLException;
 import java.util.Locale;
 
 public class UserServices {
-    public static boolean createUser(User user) {
+    public static void createUser(User user) {
         String sql = "INSERT INTO users(user_id, username, pass_hash, role) VALUES (?, ?, ?, ?)";
         try (Connection conn = DBConnect.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -19,29 +21,12 @@ public class UserServices {
             ps.setString(2, user.getUsername());
             ps.setString(3, user.getPasswordHash());
             ps.setString(4, user.getRole().roleTitle);
-            return ps.executeUpdate() == 1;
-        } catch (SQLException e) {
-            System.err.println("[error] failed to create user: " + e.getMessage());
-            return false;
-        }
-    }
+            ps.executeUpdate();
 
-    public static User getUserByID(int id) {
-        String sql = "SELECT * FROM users WHERE user_id = ?";
-        try (Connection conn = DBConnect.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, id);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return new User(rs.getInt("user_id"), rs.getString("username"),
-                            rs.getString("pass_hash"), Role.valueOf(rs.getString("role").toUpperCase(Locale.ROOT)));
-                }
-            }
+            Logger.log(String.format("created user {%s}", user.getUsername()), LogLevel.INFO);
         } catch (SQLException e) {
-            System.err.println("[error] failed to get user: " + e.getMessage());
+            Logger.log(String.format("failed to create user {%s}: ", user.getUsername()) + e.getMessage(), LogLevel.WARN);
         }
-
-        return null;
     }
 
     public static User getUserByUsername(String username) {
@@ -56,7 +41,7 @@ public class UserServices {
                 }
             }
         } catch (SQLException e) {
-            System.err.println("[error] failed to get user: " + e.getMessage());
+            Logger.log(String.format("failed to get user by username {%s}: ", username) + e.getMessage(), LogLevel.WARN);
         }
 
         return null;
@@ -73,7 +58,7 @@ public class UserServices {
                 }
             }
         } catch (SQLException e) {
-            System.err.println("[error] failed to get user: " + e.getMessage());
+            Logger.log(String.format("failed to lookup username {%s}",  username), LogLevel.WARN);
         }
 
         return false;
@@ -86,10 +71,10 @@ public class UserServices {
             ps.setInt(1, id);
 
             ps.executeUpdate();
-            System.err.println("[info] deleted user successfully");
+            Logger.log(String.format("deleted user {%d}", id), LogLevel.INFO);
         }
         catch (SQLException e) {
-            System.err.println("[error] failed to delete user: " + e.getMessage());
+            Logger.log(String.format("failed to delete user {%d}", id), LogLevel.WARN);
         }
     }
 }

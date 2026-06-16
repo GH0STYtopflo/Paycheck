@@ -1,7 +1,6 @@
-package ai.ghosty.paycheck.controller;
+package ai.ghosty.paycheck.view;
 
 import ai.ghosty.paycheck.model.Employee;
-import ai.ghosty.paycheck.service.SalaryCalculator;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -20,8 +19,7 @@ import ai.ghosty.paycheck.model.Record;
 public class DetailsController extends Controller {
     @FXML private Label lblTotalPay;
 
-    @FXML private Label lblId, lblFirstName, lblLastName, lblGender,
-            lblHireDate, lblPositionTitle, lblTenure;
+    @FXML private Label lblId, lblFirstName, lblLastName, lblGender, lblPositionTitle, lblTenure;
 
     @FXML private ComboBox<String> comboPeriod;
 
@@ -71,7 +69,6 @@ public class DetailsController extends Controller {
         lblFirstName.setText(emp.getName());
         lblLastName.setText(emp.getLastName());
         lblGender.setText(emp.getGender());
-        lblHireDate.setText(emp.getHireDate().format(DateTimeFormatter.ISO_LOCAL_DATE));
         lblPositionTitle.setText(emp.getPosition().getTitle());
         lblTenure.setText(ChronoUnit.YEARS.between(emp.getHireDate(), LocalDate.now())
         + " Years and " + ChronoUnit.MONTHS.between(emp.getHireDate(), LocalDate.now()) % 12 + " Months");
@@ -101,18 +98,44 @@ public class DetailsController extends Controller {
 
     private String formatCurrency(BigDecimal val) {
         if (val == null) return "$0.00";
-        return "$" + val.setScale(2, RoundingMode.HALF_UP).toString();
+
+        String num = val.setScale(2, RoundingMode.HALF_UP).toString();
+        if (num.contains(".")) {
+            String floatPoint = num.split("\\.")[1];
+            num = num.split("\\.")[0];
+            return "$" + formatNumber(num) + "." + floatPoint;
+        }
+
+
+        return "$" + formatNumber(num);
     }
 
-    // lil helper
+    // lil helpers
     private ObservableList<String> periodDate() {
         ArrayList<String> dates = new ArrayList<>(this.list.size());
-
-        // TODO we don't need the time stamp to be this accurate
         for (Record rec : list) {
             dates.add(rec.getDate());
         }
 
         return FXCollections.observableList(dates);
+    }
+
+    private static String formatNumber(String val) {
+        int left = val.length() % 3, groups = val.length() / 3;
+        if (val.length() <= 3) return val;
+
+        StringBuilder sb = new StringBuilder(val.substring(0, left));
+        for (int i = 0; i < groups; i++) {
+            sb.append((left == 0 && i == 0) ? "" : ",");
+
+            try {
+                sb.append(val.substring(left + i * 3, left + i * 3 + 3));
+            }
+            catch (StringIndexOutOfBoundsException e) {
+                sb.append(val.substring(left + i * 3));
+            }
+        }
+
+        return sb.toString();
     }
 }

@@ -1,6 +1,8 @@
 package ai.ghosty.paycheck.service;
 
 import ai.ghosty.paycheck.db.DBConnect;
+import ai.ghosty.paycheck.logger.LogLevel;
+import ai.ghosty.paycheck.logger.Logger;
 import ai.ghosty.paycheck.model.Record;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -37,9 +39,10 @@ public class RecordsServices {
             ps.setString(18, record.getDate());
 
             ps.executeUpdate();
+            Logger.log(String.format("inserted record {%d}", record.getId()), LogLevel.INFO);
 
         } catch (SQLException e) {
-            System.err.println("[error] failed to create record: " + e.getMessage());
+            Logger.log(String.format("failed to insert record {%d}: ", record.getId()) + e.getMessage(), LogLevel.WARN);
         }
 
         return -1;
@@ -75,10 +78,11 @@ public class RecordsServices {
                     ));
 
                 }
+                Logger.log("fetched records", LogLevel.INFO);
                 return list;
             }
         } catch (SQLException e) {
-            System.err.println("[error] failed to fetch record: " + e.getMessage());
+            Logger.log("failed to fetch records: " + e.getMessage(), LogLevel.WARN);
         }
         return null;
     }
@@ -90,9 +94,10 @@ public class RecordsServices {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, id);
             ps.executeUpdate();
+            Logger.log(String.format("deleted records {%d}", id), LogLevel.INFO);
         }
         catch (SQLException e) {
-            System.err.println("[warning] failed to delete records: " +  e.getMessage());
+            Logger.log(String.format("failed to delete records {%d}: ", id) + e.getMessage(), LogLevel.WARN);
         }
     }
 }

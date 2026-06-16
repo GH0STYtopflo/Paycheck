@@ -13,7 +13,7 @@
 <?import javafx.scene.shape.SVGPath?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="875.0" styleClass="rootPane" stylesheets="@detailsStyle.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ai.ghosty.paycheck.controller.DetailsController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="875.0" styleClass="rootPane" stylesheets="@detailsStyle.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ai.ghosty.paycheck.view.DetailsController">
 
    <top>
       <VBox prefWidth="850.0" BorderPane.alignment="CENTER">
@@ -50,40 +50,55 @@
                   <Insets left="20.0" right="20.0" />
                </VBox.margin>
                <padding>
-                  <Insets bottom="20.0" left="25.0" right="25.0" top="20.0" />
+                  <Insets bottom="15.0" left="25.0" right="25.0" top="15.0" />
                </padding>
                <children>
-                  <HBox spacing="10.0">
+                  <HBox prefHeight="100.0" prefWidth="200.0" spacing="15.0">
                      <children>
-                        <Label maxWidth="Infinity" styleClass="employee-info-label" text="Employee ID:" HBox.hgrow="ALWAYS" />
-                        <Label fx:id="lblId" styleClass="employee-info-value" text="N/A" />
-                     </children>
-                  </HBox>
-                  <HBox spacing="10.0">
-                     <children>
-                        <Label maxWidth="Infinity" styleClass="employee-info-label" text="First Name:" HBox.hgrow="ALWAYS" />
-                        <Label fx:id="lblFirstName" styleClass="employee-info-value" text="N/A" />
-                        <Region prefWidth="30.0" HBox.hgrow="NEVER" />
-                        <Label maxWidth="Infinity" styleClass="employee-info-label" text="Last Name:" HBox.hgrow="ALWAYS" />
-                        <Label fx:id="lblLastName" styleClass="employee-info-value" text="N/A" />
-                     </children>
-                  </HBox>
-                  <HBox spacing="10.0">
-                     <children>
-                        <Label maxWidth="Infinity" styleClass="employee-info-label" text="Gender:" HBox.hgrow="ALWAYS" />
-                        <Label fx:id="lblGender" styleClass="employee-info-value" text="N/A" />
-                        <Region prefWidth="30.0" HBox.hgrow="NEVER" />
-                        <Label maxWidth="Infinity" styleClass="employee-info-label" text="Position Title:" HBox.hgrow="ALWAYS" />
-                        <Label fx:id="lblPositionTitle" styleClass="employee-info-value" text="N/A" />
-                     </children>
-                  </HBox>
-                  <HBox spacing="10.0">
-                     <children>
-                        <Label maxWidth="Infinity" styleClass="employee-info-label" text="Hire Date:" HBox.hgrow="ALWAYS" />
-                        <Label fx:id="lblHireDate" styleClass="employee-info-value" text="N/A" />
-                        <Region prefWidth="30.0" HBox.hgrow="NEVER" />
-                        <Label maxWidth="Infinity" styleClass="employee-info-label" text="Employee Tenure:" HBox.hgrow="ALWAYS" />
-                        <Label fx:id="lblTenure" styleClass="employee-info-value" text="N/A" />
+                        <VBox prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0">
+                                 <children>
+                                    <Label maxWidth="Infinity" styleClass="employee-info-label" text="First Name:" HBox.hgrow="ALWAYS" />
+                                    <Label fx:id="lblFirstName" styleClass="employee-info-value" text="N/A" />
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" prefHeight="100.0" prefWidth="200.0">
+                                 <children>
+                                    <Label maxWidth="Infinity" styleClass="employee-info-label" text="Last Name:" HBox.hgrow="ALWAYS" />
+                                    <Label fx:id="lblLastName" styleClass="employee-info-value" text="N/A" />
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="60.0" prefHeight="100.0" prefWidth="200.0">
+                                 <children>
+                                    <Label maxWidth="Infinity" styleClass="employee-info-label" text="Gender:" HBox.hgrow="ALWAYS" />
+                                    <Label fx:id="lblGender" styleClass="employee-info-value" text="N/A" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
+                        <VBox layoutX="10.0" layoutY="10.0" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0">
+                                 <children>
+                                    <Label maxWidth="Infinity" styleClass="employee-info-label" text="Position Title:" HBox.hgrow="ALWAYS" />
+                                    <Label fx:id="lblPositionTitle" styleClass="employee-info-value" text="N/A" />
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" prefHeight="100.0" prefWidth="200.0">
+                                 <children>
+                                    <Label maxWidth="Infinity" styleClass="employee-info-label" text="Employee Tenure:" HBox.hgrow="ALWAYS" />
+                                    <Label fx:id="lblTenure" styleClass="employee-info-value" text="N/A" />
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="60.0" prefHeight="100.0" prefWidth="200.0">
+                                 <children>
+                                    <Label maxWidth="Infinity" styleClass="employee-info-label" text="Employee ID:" HBox.hgrow="ALWAYS" />
+                                    <Label fx:id="lblId" styleClass="employee-info-value" text="N/A" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
                      </children>
                   </HBox>
                </children>
@@ -109,7 +124,7 @@
    <center>
       <HBox alignment="CENTER" spacing="25.0" BorderPane.alignment="CENTER">
          <BorderPane.margin>
-            <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
+            <Insets left="20.0" right="20.0" top="10.0" />
          </BorderPane.margin>
          <children>
             <VBox prefWidth="400.0" spacing="12.0" styleClass="card" HBox.hgrow="ALWAYS">
@@ -238,13 +253,16 @@
                </children>
             </VBox>
          </children>
+         <padding>
+            <Insets bottom="15.0" />
+         </padding>
       </HBox>
    </center>
 
    <bottom>
       <HBox alignment="CENTER" maxWidth="-Infinity" prefHeight="50.0" prefWidth="250.0" spacing="15.0" styleClass="totalCard" BorderPane.alignment="CENTER">
          <BorderPane.margin>
-            <Insets bottom="50.0" top="5.0" />
+            <Insets bottom="20.0" />
          </BorderPane.margin>
          <children>
             <Label text="Total Pay:" textFill="WHITE">
@@ -256,6 +274,9 @@
                <font>
                   <Font name="System Bold" size="20.0" />
                </font>
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
             </Label>
          </children>
       </HBox>

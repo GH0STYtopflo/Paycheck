@@ -16,7 +16,7 @@
 <?import javafx.scene.shape.SVGPath?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="527.0" prefWidth="399.0" styleClass="rootPane" stylesheets="@loginStyle.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ai.ghosty.paycheck.controller.LoginController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="527.0" prefWidth="399.0" styleClass="rootPane" stylesheets="@loginStyle.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ai.ghosty.paycheck.view.LoginController">
 
    <top>
       <HBox fx:id="barDeco" alignment="CENTER_RIGHT" prefHeight="38.0" prefWidth="350.0" spacing="8.0" BorderPane.alignment="CENTER">
@@ -134,7 +134,7 @@
             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                <children>
       
-                  <Label fx:id="lblWarning" prefHeight="17.0" prefWidth="288.0" text="Invalid credentials" textAlignment="CENTER" textFill="#ef4444" visible="false" wrapText="true">
+                  <Label fx:id="lblWarning" alignment="CENTER" contentDisplay="CENTER" prefHeight="17.0" prefWidth="288.0" text="Invalid credentials" textAlignment="CENTER" textFill="#ef4444" visible="false" wrapText="true">
                      <font>
                         <Font name="System Bold" size="12.0" />
                      </font>

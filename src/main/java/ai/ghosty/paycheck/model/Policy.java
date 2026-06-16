@@ -114,7 +114,7 @@ public class Policy {
         sb.append(",\n");
         sb.append("CHILD ALLOWANCE: " + CHILD_ALLOWANCE_PER_CHILD);
         sb.append(",\n");
-        sb.append("WOMEN EXTRA: " + WOMEN_EXTRA);
+        sb.append("WOMEN EXTRA: " + WOMEN_EXTRA + "\n}");
 
 
         return sb.toString();

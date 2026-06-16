@@ -1,5 +1,7 @@
 package ai.ghosty.paycheck.db;
 
+import ai.ghosty.paycheck.logger.LogLevel;
+import ai.ghosty.paycheck.logger.Logger;
 import ai.ghosty.paycheck.util.Encryption;
 
 import java.sql.Connection;
@@ -20,9 +22,9 @@ public class DBInit {
 
                  try {
                      stmt.execute(sql);
-                     System.err.println("[info] created positions table successfully");
+                     Logger.log("created positions table successfully", LogLevel.INFO);
                  } catch (SQLException e) {
-                     System.err.println("[error] failed to create positions table");
+                     Logger.log("failed to create positions table " + e.getMessage(), LogLevel.ERROR);
                  }
 
                  // create employees table
@@ -32,7 +34,7 @@ public class DBInit {
                          "last_name TEXT NOT NULL," +
                          "pos_id INTEGER NOT NULL," +
                          "gender TEXT NOT NULL," +
-                         "marital_status REAL NOT NULL CHECK (marital_status IN (0,1))," +
+                         "marital_status INTEGER NOT NULL CHECK (marital_status IN (0,1))," +
                          "children INTEGER DEFAULT 0," +
                          "rent INTEGER NOT NULL CHECK (rent IN (0,1))," +
                          "work_hours INTEGER NOT NULL," +
@@ -44,24 +46,25 @@ public class DBInit {
 
                  try {
                      stmt.execute(sql);
-                     System.err.println("[info] created employees table successfully");
+
+                     Logger.log("created employees table successfully", LogLevel.INFO);
                  } catch (SQLException e) {
-                     System.err.println("[error] failed to create employees table");
+                     Logger.log("failed to create employees table " + e.getMessage(), LogLevel.ERROR);
                  }
 
                  // create users table
                  sql = "CREATE TABLE IF NOT EXISTS users (" +
                          "user_id INTEGER PRIMARY KEY," +
-                         "username TEXT UNIQUE," +
+                         "username TEXT NOT NULL UNIQUE," +
                          "pass_hash TEXT NOT NULL," +
                          "role TEXT NOT NULL," +
                          "FOREIGN KEY (user_id) REFERENCES employees(emp_id))";
 
                  try {
                      stmt.execute(sql);
-                     System.err.println("[info] created users table successfully");
+                     Logger.log("created users table successfully", LogLevel.INFO);
                  } catch (SQLException e) {
-                     System.err.println("[error] failed to create users table");
+                     Logger.log("failed to create users table " + e.getMessage(), LogLevel.ERROR);
                  }
 
                  // create pay records table
@@ -88,13 +91,13 @@ public class DBInit {
 
                  try {
                      stmt.execute(sql);
-                     System.err.println("[info] created records table successfully");
+                     Logger.log("created records table successfully", LogLevel.INFO);
                  } catch (SQLException e) {
-                     System.err.println("[error] failed to create records table");
+                     Logger.log("failed to create records table " + e.getMessage(), LogLevel.ERROR);
                  }
              }
              catch (Exception e) {
-                 System.err.println("[error] failed to create statement");
+                 Logger.log("failed to initialize DB " + e.getMessage(), LogLevel.ERROR);
              }
 
 
@@ -109,18 +112,18 @@ public class DBInit {
                 pstmt.setString(4, "admin");
 
                 pstmt.execute();
-                System.err.println("[info] created admin account successfully");
+                Logger.log("inserted admin account successfully", LogLevel.INFO);
             }
             catch (SQLException e) {
-                System.err.println("[error] failed to create admin account");
+                Logger.log("failed to insert admin account " + e.getMessage(), LogLevel.ERROR);
             }
 
         }
         catch (SQLException e) {
-             System.err.println("[error] failed to get connection to the database");
+             Logger.log("failed to initialize DB " + e.getMessage(), LogLevel.ERROR);
         }
-         catch (Exception e) {
-             System.err.println("[error] something went wrong while initializing database");
+        catch (Exception e) {
+             Logger.log("failed to initialize DB " + e.getMessage(), LogLevel.ERROR);
         }
     }
 }

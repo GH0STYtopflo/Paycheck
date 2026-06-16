@@ -1,6 +1,8 @@
 package ai.ghosty.paycheck.service;
 
 import ai.ghosty.paycheck.db.DBConnect;
+import ai.ghosty.paycheck.logger.LogLevel;
+import ai.ghosty.paycheck.logger.Logger;
 import ai.ghosty.paycheck.model.Employee;
 import ai.ghosty.paycheck.model.Position;
 
@@ -12,12 +14,11 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ArrayList;
-import java.util.List;
 
 public class EmployeeServices {
-    public static int create(Employee emp) {
-        String sql = "INSERT INTO employees(emp_id,name, last_name, gender, marital_status, children, rent, work_hours, overtime, deduction_hours, loan, date, pos_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    public static void create(Employee emp) {
+        String sql = "INSERT INTO employees(emp_id,name, last_name, gender, marital_status, children, " +
+                "rent, work_hours, overtime, deduction_hours, loan, date, pos_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = DBConnect.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
             ps.setInt(1, emp.getId());
@@ -34,17 +35,12 @@ public class EmployeeServices {
             ps.setString(12, emp.getHireDate().toString());
             ps.setInt(13, emp.getPosition().getId());
 
-            int affected = ps.executeUpdate();
-            if (affected == 0) return -1;
+            ps.executeUpdate();
+            Logger.log(String.format("created employee {%d}", emp.getId()), LogLevel.INFO);
 
-            try (ResultSet keys = ps.getGeneratedKeys()) {
-                if (keys.next()) return keys.getInt(1);
-            }
         } catch (SQLException e) {
-            System.err.println("[error] failed to create employee: " + e.getMessage());
+            Logger.log(String.format("failed to insert employee {%s}: ", emp.getName()), LogLevel.WARN );
         }
-
-        return -1;
     }
 
     public static Employee getById(int id) {
@@ -69,11 +65,14 @@ public class EmployeeServices {
                     Position pos = PositionsServices.getPositionById(pos_id);
 
 
-                    return new Employee(id, name, lastName, gender,isMarried , overtime, children, workHours, deductionHours, loan, rent, date, pos);
+                    Logger.log(String.format("fetched employee {%d}", id), LogLevel.INFO);
+                    return new Employee(id, name, lastName, gender,isMarried ,
+                            overtime, children, workHours, deductionHours, loan,
+                            rent, date, pos);
                 }
             }
         } catch (SQLException e) {
-            System.err.println("[error] failed to fetch employee: " + e.getMessage());
+            Logger.log(String.format("failed to fetch employee {%d}: ", id) + e.getMessage(), LogLevel.WARN);
         }
         return null;
     }
@@ -100,17 +99,20 @@ public class EmployeeServices {
                 int pos_id = rs.getInt("pos_id");
                 Position pos = PositionsServices.getPositionById(pos_id);
 
-                employees.add(new Employee(id, name, lastName, gender, isMarried, overtime, children, workHours, deductionHours, loan, rent, date, pos));
+                employees.add(new Employee(id, name, lastName, gender, isMarried, overtime,
+                        children, workHours, deductionHours, loan, rent, date, pos));
             }
         } catch (SQLException e) {
-            System.err.println("[error] failed to fetch employees: " + e.getMessage());
+            Logger.log("failed to fetch employees: " + e.getMessage(), LogLevel.WARN);
         }
+
+        Logger.log("fetched employees", LogLevel.INFO);
         return employees;
     }
 
     public static void updateEmpState(Employee emp) {
         String sql = "UPDATE employees SET children = ?, rent = ?, marital_status = ?,work_hours = ?, overtime = ?, deduction_hours = ?," +
-                " loan = ?, pos_id = ?, WHERE emp_id = ?";
+                " loan = ?, pos_id = ? WHERE emp_id = ?";
 
         try (Connection conn = DBConnect.getConnection()) {
             PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -125,9 +127,10 @@ public class EmployeeServices {
             pstmt.setInt(9, emp.getId());
 
             pstmt.execute();
+            Logger.log(String.format("updated employee status {%d}", emp.getId()), LogLevel.INFO);
         }
         catch (SQLException e) {
-            System.err.println("[error] failed to update employee status: " + e.getMessage());
+            Logger.log(String.format("failed to update employee status {%d}: " + e.getMessage(), emp.getId()), LogLevel.WARN);
         }
     }
 
@@ -138,10 +141,10 @@ public class EmployeeServices {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, id);
             ps.executeUpdate();
-            System.err.println("[info] deleted user successfully");
+            Logger.log(String.format("deleted employee {%d}", id), LogLevel.INFO);
         }
         catch (SQLException e) {
-            System.err.println("[error] failed to delete employee: " + e.getMessage());
+            Logger.log(String.format("failed to delete employee from database {%d}: " + e.getMessage(), id), LogLevel.WARN);
         }
 
         UserServices.deleteUser(id);

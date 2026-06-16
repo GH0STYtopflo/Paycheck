@@ -1,6 +1,8 @@
-package ai.ghosty.paycheck.controller;
+package ai.ghosty.paycheck.view;
 
 import ai.ghosty.paycheck.authentication.QuickLogin;
+import ai.ghosty.paycheck.logger.LogLevel;
+import ai.ghosty.paycheck.logger.Logger;
 import ai.ghosty.paycheck.model.Role;
 import ai.ghosty.paycheck.model.User;
 import ai.ghosty.paycheck.service.EmployeeServices;
@@ -116,7 +118,7 @@ public class LoginController extends Controller {
                     Controller controller = loader.getController();
                     controller.initialize(stage);
                 } catch (IOException e) {
-                    System.err.println("failed to load admin view " + e.getMessage());
+                    Logger.log("failed to load view {admin.fxml}: " + e.getMessage(), LogLevel.ERROR);
                     e.printStackTrace();
                 }
                 break;
@@ -129,7 +131,7 @@ public class LoginController extends Controller {
                     Controller controller = loader.getController();
                     controller.initialize(stage, EmployeeServices.getById(usr.getId()), RecordsServices.getById(usr.getId()));
                 } catch (IOException e) {
-                    System.err.println("failed to load admin view " + e.getMessage());
+                    Logger.log("failed to load view {details.fxml}: " + e.getMessage(), LogLevel.ERROR);
                     e.printStackTrace();
                 }
             }
