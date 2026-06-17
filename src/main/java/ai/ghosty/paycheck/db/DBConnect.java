@@ -5,7 +5,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DBConnect {
-    private final static String PATH_TO_DB = "jdbc:sqlite:./db/ghst.db";
+    private final static String PATH_TO_DB = "jdbc:sqlite:./db/ghosty.db";
 
     public static Connection getConnection() {
         try {

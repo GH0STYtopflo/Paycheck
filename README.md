@@ -127,19 +127,14 @@ mvn clean package
 mv target/UberJarCrossPlatform.jar .
 java -jar UberJarCrossPlatform.jar
 ```
+> You can also use the pre-built uber jar in the releases
 
 #### Alternatively you can use the run scripts
 ```bash
 # For GNU/Linux Systems 
 chmod 700 run.sh 
 ./run.sh
-# For Windows Systems
-.\run.ps1
 ```
-> Please note that you might need to make Windows let PowerShell run scipts.
-> to do so run `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` in PowerShell
-> then answer `[Y] Yes`. After this you can run PowerShell scripts normally.
-> For reverting changes run `Set-ExecutionPolicy -Scope CurrentUser Undefined`
 
 The SQLite database (`db/ghst.db`) is created automatically on the first launch.
 
