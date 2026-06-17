@@ -124,7 +124,7 @@ mvn javafx:run
 #### Or build the uber JAR and run it
 ```bash
 mvn clean package
-mv target/UberJarCrossPlatform.jar ../
+mv target/UberJarCrossPlatform.jar .
 java -jar UberJarCrossPlatform.jar
 ```
 
