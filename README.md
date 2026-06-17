@@ -108,7 +108,7 @@ src/main/resources/app/ui/
 - Java 21 or later
 - Maven 3.6+
 
-### Build & Run
+#### Build & Run
 
 ```bash
 # Clone the repository
